@@ -20,7 +20,6 @@ namespace Dapper.ConsoleRun
             {
                 FirstName = "Test",
                 LastName = "Last",
-                IsActive = true,
                 CreatedDateTime = DateTime.Now
             };
 
@@ -35,7 +34,7 @@ namespace Dapper.ConsoleRun
             var customers = await customerRespository.GetAll();
 
             Console.WriteLine("List of all Customers");
-            foreach (var customer in customers)
+            await foreach (var customer in customers)
             {
                 Console.WriteLine($"  {customer.CustomerId}  {customer.FirstName}  {customer.LastName}  {customer.CreatedDateTime}  {customer.CreatedDateTime.ToShortDateString()}  {customer.CreatedDateTime.ToShortTimeString()}");
             }
@@ -58,7 +57,6 @@ namespace Dapper.ConsoleRun
 
             // Update the first customer
             firstCustomer.FirstName = "New FirstName";
-            firstCustomer.IsActive = !(firstCustomer.IsActive);
             var isUpdated = await customerRespository.Update(firstCustomer);
             if (isUpdated)
                 {

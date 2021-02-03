@@ -18,7 +18,7 @@ namespace Dapper.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<Customer>> Get()
+        public async Task<IAsyncEnumerable<Customer>> Get()
         {
             return await customerRespository.GetAll();
         }

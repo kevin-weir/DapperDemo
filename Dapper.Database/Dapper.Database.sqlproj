@@ -57,5 +57,25 @@
   <Import Condition="'$(SQLDBExtensionsRefPath)' == ''" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
   <ItemGroup>
     <Folder Include="Properties" />
+    <Folder Include="dbo\" />
+    <Folder Include="dbo\Tables\" />
+    <Folder Include="Security\" />
+    <Folder Include="PublishLocations" />
+    <Folder Include="Scripts" />
+    <Folder Include="Compare" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="dbo\Tables\Customer.sql" />
+    <Build Include="Security\DESKTOP-6NDN4SL_kevin.sql" />
+    <Build Include="dbo\Tables\Country.sql" />
+    <Build Include="dbo\Tables\Province.sql" />
+    <Build Include="Scripts\Seed.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <RefactorLog Include="Dapper.Database.refactorlog" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="PublishLocations\Development_Dapper.publish.xml" />
+    <None Include="Compare\Development_Dapper.scmp" />
   </ItemGroup>
 </Project>

@@ -22,9 +22,9 @@ namespace Dapper.Repository
             return await connection.GetAsync<Customer>(customerId, transaction);
         }
 
-        public async Task<IEnumerable<Customer>> GetAll()
+        public async Task<IAsyncEnumerable<Customer>> GetAll()
         {
-            return await connection.GetAllAsync<Customer>(transaction);
+            return (IAsyncEnumerable<Customer>)await connection.GetAllAsync<Customer>(transaction);
         }
 
         public async Task<Customer> Insert(Customer customer)

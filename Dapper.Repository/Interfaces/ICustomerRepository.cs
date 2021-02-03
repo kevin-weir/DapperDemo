@@ -6,7 +6,7 @@ namespace Dapper.Repository
 {
     public interface ICustomerRespository
     {
-        Task<IEnumerable<Customer>> GetAll();
+        Task<IAsyncEnumerable<Customer>> GetAll();
 
         Task<Customer> GetById(long customerId);
 

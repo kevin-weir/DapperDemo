@@ -1,0 +1,96 @@
+﻿/*
+USE [Dapper]
+GO
+
+SET IDENTITY_INSERT [dbo].[Country] ON
+GO
+
+INSERT INTO [dbo].[Country]
+           ([CountryId],
+            [CountryAbbreviation],
+            [CountryName],
+            [CreatedDateTime],
+            [ModifiedDateTime])
+     VALUES
+           (1,
+		   'CA',
+           'Canada',
+           GETDATE(),
+           GETDATE())
+GO
+
+SET IDENTITY_INSERT [dbo].[Country] OFF
+GO
+
+
+SET IDENTITY_INSERT [dbo].[Province] ON
+GO
+
+INSERT INTO [dbo].[Province]
+           ([ProvinceId],
+            [CountryId],
+            [ProvinceAbbreviation],
+            [ProvinceName],
+            [CreatedDateTime],
+            [ModifiedDateTime])
+     VALUES
+           (1,
+		    1,
+           'SK',
+           'Saskatchewan',
+            GETDATE(),
+            GETDATE())
+GO
+
+INSERT INTO [dbo].[Province]
+           ([ProvinceId],
+            [CountryId],
+            [ProvinceAbbreviation],
+            [ProvinceName],
+            [CreatedDateTime],
+            [ModifiedDateTime])
+     VALUES
+           (2,
+		    1,
+           'AB',
+           'Alberta',
+           GETDATE(),
+           GETDATE())
+GO
+
+SET IDENTITY_INSERT [dbo].[Province] OFF
+GO
+
+
+SET IDENTITY_INSERT [dbo].[Customer] ON
+GO
+
+INSERT INTO [dbo].[Customer]
+           ([CustomerId],
+		    [FirstName],
+            [LastName],
+            [PhoneNumber],
+            [StreetAddress],
+            [City],
+            [CountryId],
+            [ProvinceId],
+            [PostalCode],
+            [CreatedDateTime],
+            [ModifiedDateTime])
+     VALUES
+           (1,
+		   'Kevin',
+           'Weir',
+           '5555555555',
+           '344 Cavendish Street',
+           'Regina',
+            1,
+            1,
+           'S4N4K1',
+           GETDATE(),
+           GETDATE())
+GO
+
+SET IDENTITY_INSERT [dbo].[Customer] OFF
+GO
+*/
