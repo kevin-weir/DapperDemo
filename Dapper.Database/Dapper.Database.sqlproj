@@ -81,5 +81,6 @@
   <ItemGroup>
     <None Include="PublishLocations\Development_Dapper.publish.xml" />
     <None Include="Compare\Development_Dapper.scmp" />
+    <None Include="README.txt" />
   </ItemGroup>
 </Project>
