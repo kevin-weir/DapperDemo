@@ -1,19 +1,20 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Dapper.Models;
+using Dapper.Domain.Models;
+using Dapper.Repository.Models;
 
-namespace Dapper.Repository
+namespace Dapper.Repository.Interfaces
 {
     public interface ICustomerRespository
     {
-        Task<IAsyncEnumerable<Customer>> GetAll();
+        Task<IEnumerable<CustomerDtoQuery>> GetAll();
 
-        Task<Customer> GetById(long customerId);
+        Task<CustomerDtoQuery> GetById(int customerId);
 
-        Task<Customer> Insert(Customer customer);
+        Task<CustomerDtoQuery> Insert(Customer customer);
 
         Task<bool> Update(Customer customer);
 
-        Task<bool> Delete(long customerId);
+        Task<bool> Delete(int customerId);
     }
 }

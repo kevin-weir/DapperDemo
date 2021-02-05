@@ -1,10 +1,12 @@
 ﻿CREATE TABLE [dbo].[Province]
 (
-	[ProvinceId] BIGINT IDENTITY(1, 1) NOT NULL,
-    [CountryId] BIGINT NOT NULL, 
+	[ProvinceId] INT IDENTITY(1, 1) NOT NULL,
+    [CountryId] INT NOT NULL, 
     [ProvinceAbbreviation] NVARCHAR(3) NOT NULL, 
-    [ProvinceName] NCHAR(25) NOT NULL, 
+    [ProvinceName] NVARCHAR(25) NOT NULL, 
+    [CreatedBy] NVARCHAR(256) NULL, 
     [CreatedDateTime] DATETIME NOT NULL, 
+    [ModifiedBy] NVARCHAR(256) NULL, 
     [ModifiedDateTime] DATETIME NOT NULL, 
     CONSTRAINT [FK_Province_Country] FOREIGN KEY ([CountryId]) REFERENCES [Country]([CountryId]), 
     CONSTRAINT [AK_Province_ProvinceAbbreviation] UNIQUE ([ProvinceAbbreviation]), 

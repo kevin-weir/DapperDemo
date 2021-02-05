@@ -1,8 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Dapper.Models;
-using Dapper.Repository;
+using Dapper.Repository.Models;
+using Dapper.Domain.Models;
+using Dapper.Repository.Interfaces;
+using Microsoft.AspNetCore.Http;
+using AutoMapper;
+using System;
 
 namespace Dapper.API.Controllers
 {
@@ -18,13 +22,13 @@ namespace Dapper.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IAsyncEnumerable<Customer>> Get()
+        public async Task<IEnumerable<CustomerDtoQuery>> Get()
         {
             return await customerRespository.GetAll();
         }
 
         [HttpGet("{customerId}")]
-        public async Task<ActionResult<Customer>> Get(long customerId)
+        public async Task<ActionResult<CustomerDtoQuery>> Get(int customerId)
         {
             var result = await customerRespository.GetById(customerId);
             if (result == null)
@@ -36,13 +40,28 @@ namespace Dapper.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Customer>> Post(Customer customer)
+        //[ProducesResponseType(typeof(CustomerDTO), StatusCodes.Status201Created)]
+        public async Task<ActionResult<CustomerDtoQuery>> Post(CustomerDtoInsert customer)
         {
-            return await customerRespository.Insert(customer);
+            
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<CustomerDtoInsert, Customer>());
+            //var newCustomer = new Customer();
+
+            var mapper = new Mapper(config);
+            var newCustomer = mapper.Map<Customer>(customer);
+
+            newCustomer.CreatedDateTime = DateTime.Now;
+            newCustomer.ModifiedDateTime = DateTime.Now;
+
+            var customerDtoQuery = await customerRespository.Insert(newCustomer);
+
+            return CreatedAtAction(nameof(Get), new { customerDtoQuery.CustomerId }, customerDtoQuery);
+
+            //            return await customerRespository.Insert(customer);
         }
 
         [HttpPut("{customerId}")]
-        public async Task<ActionResult> Put(long customerId, Customer customer)
+        public async Task<ActionResult> Put(int customerId, Customer customer)
         {
             if (customerId != customer.CustomerId)
             {
@@ -60,7 +79,7 @@ namespace Dapper.API.Controllers
         }
 
         [HttpDelete("{customerId}")]
-        public async Task<ActionResult> Delete(long customerId)
+        public async Task<ActionResult> Delete(int customerId)
         {
             var isDeleted = await customerRespository.Delete(customerId);
             if (!isDeleted) 

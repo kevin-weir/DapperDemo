@@ -1,14 +1,14 @@
 ﻿using System;
 
-namespace Dapper.Models
+namespace Dapper.Repository.Models
 {
-    class OrderProduct
+    public class OrderProduct
     {
-        public long OrderProductId { get; set; }
+        public int OrderProductId { get; set; }
 
-        public long OrderId { get; set; }
+        public int OrderId { get; set; }
 
-        public long ProductId { get; set; }
+        public int ProductId { get; set; }
 
         public int Quantity { get; set; }
 
@@ -20,7 +20,11 @@ namespace Dapper.Models
 
         public decimal Taxes { get; set; }
 
+        public string CreatedBy { get; set; }
+
         public DateTime CreatedDateTime { get; set; }
+
+        public string ModifiedBy { get; set; }
 
         public DateTime ModifiedDateTime { get; set; }
     }

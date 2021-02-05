@@ -9,7 +9,7 @@ Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Dapper.Database", "Dapper.D
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dapper.API", "Dapper.API\Dapper.API.csproj", "{A7EC4953-73E9-4A0C-B78F-9A1BC48CBFB9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dapper.Models", "Dapper.Models\Dapper.Models.csproj", "{35DB2F11-57F2-40E7-BC5F-9D782854B87B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dapper.Domain", "Dapper.Models\Dapper.Domain.csproj", "{35DB2F11-57F2-40E7-BC5F-9D782854B87B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dapper.Repository", "Dapper.Repository\Dapper.Repository.csproj", "{484073DA-44C1-48FF-B79D-A44DE98902BF}"
 EndProject

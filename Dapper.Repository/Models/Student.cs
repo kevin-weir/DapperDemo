@@ -1,10 +1,10 @@
 ﻿using System;
 
-namespace Dapper.Models
+namespace Dapper.Repository.Models
 {
-    class Student
+    public class Student
     {
-        public long StudentId { get; set; }
+        public int StudentId { get; set; }
 
         public string FirstName { get; set; }
 
@@ -22,7 +22,11 @@ namespace Dapper.Models
 
         public bool HasGraduated { get; set; }
 
+        public string CreatedBy { get; set; }
+
         public DateTime CreatedDateTime { get; set; }
+
+        public string ModifiedBy { get; set; }
 
         public DateTime ModifiedDateTime { get; set; }
     }

@@ -7,6 +7,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using System.Data;
 using Dapper.Repository;
+using Dapper.Repository.Interfaces;
+using System.IO;
 
 namespace Dapper.API
 {
@@ -31,6 +33,10 @@ namespace Dapper.API
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Dapper.API", Version = "v1" });
+
+                c.IncludeXmlComments(Path.Combine(System.AppContext.BaseDirectory, "Dapper.Repository.xml"));
+                c.IncludeXmlComments(Path.Combine(System.AppContext.BaseDirectory, "Dapper.API.xml"));
+                c.IncludeXmlComments(Path.Combine(System.AppContext.BaseDirectory, "Dapper.Domain.xml"));
             });
         }
 
