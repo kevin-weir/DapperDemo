@@ -7,6 +7,7 @@ using Dapper.Repository.Interfaces;
 using Microsoft.AspNetCore.Http;
 using AutoMapper;
 using System;
+using Dapper.API.Helpers;
 
 namespace Dapper.API.Controllers
 {
@@ -15,10 +16,12 @@ namespace Dapper.API.Controllers
     public class CustomerController : ControllerBase
     {
         private readonly ICustomerRespository customerRespository;
+        private readonly IMapper mapper;
 
-        public CustomerController(ICustomerRespository customerRespository)
+        public CustomerController(ICustomerRespository customerRespository, IMapper mapper)
         {
             this.customerRespository = customerRespository;
+            this.mapper = mapper;
         }
 
         [HttpGet]
@@ -41,23 +44,20 @@ namespace Dapper.API.Controllers
 
         [HttpPost]
         //[ProducesResponseType(typeof(CustomerDTO), StatusCodes.Status201Created)]
-        public async Task<ActionResult<CustomerDtoQuery>> Post(CustomerDtoInsert customer)
+        public async Task<ActionResult<CustomerDtoQuery>> Post(CustomerDtoInsert dtoCustomer)
         {
-            
-            var config = new MapperConfiguration(cfg => cfg.CreateMap<CustomerDtoInsert, Customer>());
-            //var newCustomer = new Customer();
+            // Map the posted dtoCustomer to the repositories Customer entity
+            var newCustomer = mapper.Map<Customer>(dtoCustomer);
 
-            var mapper = new Mapper(config);
-            var newCustomer = mapper.Map<Customer>(customer);
+            // TODO Perform validation on modelstate
 
-            newCustomer.CreatedDateTime = DateTime.Now;
-            newCustomer.ModifiedDateTime = DateTime.Now;
+            // Audit the changes made to the new customer
+            newCustomer = Audit<Customer>.PerformAudit(newCustomer);
 
+            // Insert the new Customer into the respository
             var customerDtoQuery = await customerRespository.Insert(newCustomer);
 
             return CreatedAtAction(nameof(Get), new { customerDtoQuery.CustomerId }, customerDtoQuery);
-
-            //            return await customerRespository.Insert(customer);
         }
 
         [HttpPut("{customerId}")]

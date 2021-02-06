@@ -9,6 +9,7 @@ using System.Data;
 using Dapper.Repository;
 using Dapper.Repository.Interfaces;
 using System.IO;
+using Dapper.API.Helpers;
 
 namespace Dapper.API
 {
@@ -24,10 +25,11 @@ namespace Dapper.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddTransient<IDbConnection>(db => new SqlConnection(
+            services.AddScoped<IDbConnection>(db => new SqlConnection(
                     Configuration.GetConnectionString("DefaultConnection")));
-            services.AddTransient<ICustomerRespository, CustomerRespository>();
+            services.AddScoped<ICustomerRespository, CustomerRespository>();
 
+            services.AddAutoMapper(typeof(MappingProfile));
             services.AddControllers();
 
             services.AddSwaggerGen(c =>

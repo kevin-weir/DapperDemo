@@ -1,10 +1,11 @@
 ﻿using System;
+using Dapper.Repository.Interfaces;
 using Dapper.Contrib.Extensions;
 
 namespace Dapper.Repository.Models
 {
     [Table("Customer")]
-    public class Customer
+    public class Customer : IAuditable
     {
         [Key]
         public int CustomerId { get; set; }
@@ -35,10 +36,10 @@ namespace Dapper.Repository.Models
 
         public string CreatedBy { get; set; }
 
-        public DateTime CreatedDateTime { get; set; }
+        public DateTime? CreatedDateTime { get; set; }
 
         public string ModifiedBy { get; set; }
 
-        public DateTime ModifiedDateTime { get; set; }
+        public DateTime? ModifiedDateTime { get; set; }
     }
 }

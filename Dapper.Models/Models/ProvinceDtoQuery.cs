@@ -14,10 +14,10 @@ namespace Dapper.Domain.Models
 
         public string CreatedBy { get; set; }
 
-        public DateTime CreatedDateTime { get; set; }
+        public DateTime? CreatedDateTime { get; set; }
 
         public string ModifiedBy { get; set; }
 
-        public DateTime ModifiedDateTime { get; set; }
+        public DateTime? ModifiedDateTime { get; set; }
     }
 }
