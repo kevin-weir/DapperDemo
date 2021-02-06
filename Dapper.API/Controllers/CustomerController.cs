@@ -32,7 +32,7 @@ namespace Dapper.API.Controllers
         public async Task<ActionResult<CustomerDtoQuery>> Get(int customerId)
         {
             var result = await customerRespository.GetById(customerId);
-            if (result == null)
+            if (result is null)
             {
                 return NotFound();
             }
