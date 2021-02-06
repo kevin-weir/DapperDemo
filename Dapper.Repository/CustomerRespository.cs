@@ -1,12 +1,11 @@
 ﻿using System.Data;
+using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Dapper.Repository.Models;
-using Dapper.Domain.Models;
 using Dapper.Contrib.Extensions;
+using Dapper.Repository.Models;
 using Dapper.Repository.Interfaces;
-
-using System.Linq;
+using Dapper.Domain.Models;
 
 namespace Dapper.Repository
 {
@@ -29,62 +28,30 @@ namespace Dapper.Repository
 
         public async Task<CustomerDtoQuery> GetById(int customerId)
         {
-            //return await connection.GetAsync<Customer>(customerId, transaction);
-
             var sql = customerSQL + " WHERE Customer.CustomerId = @CustomerId";
 
-            IEnumerable<CustomerDtoQuery> customers = await connection.QueryAsync<CustomerDtoQuery, CountryDtoQuery, ProvinceDtoQuery, CustomerDtoQuery>(
-            sql,
-            (customer, country, province) =>
-            {
-                customer.Country = country;
-                customer.Province = province;
-                return customer;
-            },
-            param: new { CustomerId = customerId},
-            splitOn: "CountryId, ProvinceId");
-
-            return customers.FirstOrDefault();
+            return (await GetCustomers(sql, param: new { CustomerId = customerId })).FirstOrDefault(); 
         }
 
         public async Task<IEnumerable<CustomerDtoQuery>> GetAll()
         {
-            //return await connection.GetAllAsync<Customer>(transaction);
+             var sql = customerSQL;
 
+             return await GetCustomers(sql, param: null);
+        }
 
-
-            //string sql = "SELECT * FROM Customer AS A LEFT OUTER JOIN Country AS B ON A.CountryId = B.CountryId;";
-
-            //IEnumerable<Customer> customers = await connection.QueryAsync<Customer, Country, Customer>(
-            //            sql,
-            //            (customer, country) =>
-            //            {
-            //                customer.Country = country;
-            //                return customer;
-            //            },
-            //            splitOn: "CountryId");
-                    //.Distinct()
-                    //.ToList();
-
-            //return customers;
-
-
-
-            //string sql = "SELECT * FROM Customer AS A LEFT OUTER JOIN Country AS B ON A.CountryId = B.CountryId LEFT OUTER JOIN Province AS C ON A.ProvinceId = C.ProvinceId;";
-            //string sql = @"SELECT * 
-            //               FROM Customer AS A 
-            //               LEFT OUTER JOIN Country AS B ON A.CountryId = B.CountryId 
-            //               LEFT OUTER JOIN Province AS C ON A.ProvinceId = C.ProvinceId;";
-
-            IEnumerable<CustomerDtoQuery> customers = await connection.QueryAsync<CustomerDtoQuery, CountryDtoQuery, ProvinceDtoQuery, CustomerDtoQuery>(
-                        customerSQL,
+        private async Task<IEnumerable<CustomerDtoQuery>> GetCustomers(string sql, object param = null)
+        {
+            var customers = await connection.QueryAsync<CustomerDtoQuery, CountryDtoQuery, ProvinceDtoQuery, CustomerDtoQuery>(
+                        sql,
                         (customer, country, province) =>
                         {
                             customer.Country = country;
                             customer.Province = province;
                             return customer;
                         },
-                        splitOn: "CountryId, ProvinceId");
+                        param: param,
+                        splitOn: $"{nameof(CountryDtoQuery.CountryId)}, {nameof(ProvinceDtoQuery.ProvinceId)}");
 
             return customers;
         }
@@ -92,9 +59,8 @@ namespace Dapper.Repository
         public async Task<CustomerDtoQuery> Insert(Customer customer)
         {
             var customerId = await connection.InsertAsync<Customer>(customer, transaction);
-            var newCustomer = await GetById(customerId);
 
-            return newCustomer;
+            return await GetById(customerId);
         }
 
         public async Task<bool> Update(Customer customer)
@@ -105,6 +71,11 @@ namespace Dapper.Repository
         public async Task<bool> Delete(int customerId)
         {
             return await connection.DeleteAsync<Customer>(new Customer { CustomerId = customerId }, transaction);
+        }
+        
+        public async Task<Customer> GetEntityById(int customerId)
+        {
+            return await connection.GetAsync<Customer>(customerId);
         }
     }
 }

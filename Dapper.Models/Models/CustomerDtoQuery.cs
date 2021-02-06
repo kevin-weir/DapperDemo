@@ -19,7 +19,7 @@ namespace Dapper.Domain.Models
         /// <summary>
         /// The country where the customer resides
         /// </summary>
-        /// <example>null</example> 
+        /// <example>"null"</example> 
         public int? CountryId { get; set; }
 
         public CountryDtoQuery Country { get; set; }
@@ -27,7 +27,7 @@ namespace Dapper.Domain.Models
         /// <summary>
         /// The province where the customer resides
         /// </summary>
-        /// <example>null</example> 
+        /// <example>"null"</example> 
         public int? ProvinceId { get; set; }
 
         public ProvinceDtoQuery Province { get; set; }

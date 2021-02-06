@@ -16,5 +16,7 @@ namespace Dapper.Repository.Interfaces
         Task<bool> Update(Customer customer);
 
         Task<bool> Delete(int customerId);
+
+        Task<Customer> GetEntityById(int customerId);
     }
 }

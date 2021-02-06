@@ -17,13 +17,13 @@
         /// <summary>
         /// The country where the customer resides
         /// </summary>
-        /// <example>null</example> 
+        /// <example>"null"</example> 
         public int? CountryId { get; set; }
 
         /// <summary>
         /// The province where the customer resides
         /// </summary>
-        /// <example>null</example> 
+        /// <example>"null"</example> 
         public int? ProvinceId { get; set; }
 
         public string PostalCode { get; set; }

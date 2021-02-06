@@ -4,10 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Dapper.Repository.Models;
 using Dapper.Domain.Models;
 using Dapper.Repository.Interfaces;
-using Microsoft.AspNetCore.Http;
-using AutoMapper;
-using System;
 using Dapper.API.Helpers;
+using AutoMapper;
 
 namespace Dapper.API.Controllers
 {
@@ -43,33 +41,56 @@ namespace Dapper.API.Controllers
         }
 
         [HttpPost]
-        //[ProducesResponseType(typeof(CustomerDTO), StatusCodes.Status201Created)]
         public async Task<ActionResult<CustomerDtoQuery>> Post(CustomerDtoInsert dtoCustomer)
         {
-            // Map the posted dtoCustomer to the repositories Customer entity
+            // Map dtoCustomer to repositories Customer entity
             var newCustomer = mapper.Map<Customer>(dtoCustomer);
 
-            // TODO Perform validation on modelstate
-
-            // Audit the changes made to the new customer
+            // Apply audit changes to Customer entity
             newCustomer = Audit<Customer>.PerformAudit(newCustomer);
 
-            // Insert the new Customer into the respository
+            // Validate Customer entity using ModelState
+            if (!TryValidateModel(newCustomer))
+            {
+                return ValidationProblem(ModelState);
+            }
+
+            // Insert new Customer into the respository
             var customerDtoQuery = await customerRespository.Insert(newCustomer);
 
             return CreatedAtAction(nameof(Get), new { customerDtoQuery.CustomerId }, customerDtoQuery);
         }
 
         [HttpPut("{customerId}")]
-        public async Task<ActionResult> Put(int customerId, Customer customer)
+        public async Task<ActionResult> Put(int customerId, CustomerDtoUpdate dtoCustomer)
         {
-            if (customerId != customer.CustomerId)
+            if (customerId != dtoCustomer.CustomerId)
             {
-                ModelState.AddModelError("CustomerId", "The Parameter CustomerId and the CustomerId from the body do not match."); 
+                ModelState.AddModelError("CustomerId", "The Parameter CustomerId and the CustomerId from the body do not match.");
                 return ValidationProblem(ModelState);
             }
 
-            var isUpdated = await customerRespository.Update(customer);
+            // Get a copy of the customer entity from the respository
+            var updateCustomer = await customerRespository.GetEntityById(customerId);
+            if (updateCustomer is null) 
+            {
+                return NotFound();
+            }
+
+            // Map dtoCustomer to the repositories Customer entity
+            updateCustomer = mapper.Map(dtoCustomer, updateCustomer);
+
+            // Apply audit changes to Customer entity
+            updateCustomer = Audit<Customer>.PerformAudit(updateCustomer);
+
+            // Validate Customer entity using ModelState
+            if (!TryValidateModel(updateCustomer))
+            {
+                return ValidationProblem(ModelState);
+            }
+
+            // Update Customer in the respository
+            var isUpdated = await customerRespository.Update(updateCustomer);
             if (!isUpdated) 
             {
                 return NotFound();

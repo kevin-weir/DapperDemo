@@ -1,3 +1,5 @@
+using System.IO;
+using System.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Data.SqlClient;
@@ -5,10 +7,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using System.Data;
+using FluentValidation.AspNetCore;
 using Dapper.Repository;
 using Dapper.Repository.Interfaces;
-using System.IO;
 using Dapper.API.Helpers;
 
 namespace Dapper.API
@@ -30,7 +31,13 @@ namespace Dapper.API
             services.AddScoped<ICustomerRespository, CustomerRespository>();
 
             services.AddAutoMapper(typeof(MappingProfile));
-            services.AddControllers();
+
+            services.AddControllers()
+                .AddFluentValidation(fv => {
+                    fv.RegisterValidatorsFromAssemblyContaining<CustomerRespository>();
+                    fv.RunDefaultMvcValidationAfterFluentValidationExecutes = true;
+                    fv.ImplicitlyValidateChildProperties = true;
+                });
 
             services.AddSwaggerGen(c =>
             {
@@ -48,6 +55,7 @@ namespace Dapper.API
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Dapper.API v1"));
             }
