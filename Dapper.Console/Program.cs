@@ -57,7 +57,6 @@ namespace Dapper.ConsoleRun
             //    }
 
             //    // Update the first customer
-            //    //TODO Uncomment
             //    //firstCustomer.FirstName = "New FirstName";
             //    //var isUpdated = await customerRespository.Update(firstCustomer);
             //    //if (isUpdated)
