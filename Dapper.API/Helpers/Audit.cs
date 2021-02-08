@@ -3,8 +3,6 @@ using Dapper.Repository.Interfaces;
 
 namespace Dapper.API.Helpers
 {
-    //public class Audit<T> where T : IAuditable
-
     public class Audit<T> where T : IAuditable
     {
         public static T PerformAudit(T entity)
