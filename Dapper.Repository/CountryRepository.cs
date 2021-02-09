@@ -6,6 +6,7 @@ using Dapper.Contrib.Extensions;
 using Dapper.Repository.Models;
 using Dapper.Repository.Interfaces;
 using Dapper.Domain.Models;
+using Dapper.Repository.Helpers;
 
 namespace Dapper.Repository
 {
@@ -26,18 +27,30 @@ namespace Dapper.Repository
 
         public async Task<IEnumerable<CountryDtoQuery>> GetAll()
         {
-            return await GetCountries(countrySQL, param: null);
+            var countries = await GetCountries(
+                countrySQL,
+                param: null,
+                whereExpression: null,
+                orderByExpression: "Country.CountryName ASC");
+
+            return countries;
         }
 
         public async Task<CountryDtoQuery> GetById(int countryId)
         {
-            var sql = countrySQL + " WHERE Country.CountryId = @CountryId";
+            var countries = await GetCountries(
+                countrySQL,
+                param: new { CountryId = countryId },
+                whereExpression: "Country.CountryId = @CountryId",
+                orderByExpression: null);
 
-            return (await GetCountries(sql, param: new { CountryId = countryId })).FirstOrDefault();
+            return countries.FirstOrDefault();
         }
 
-        private async Task<IEnumerable<CountryDtoQuery>> GetCountries(string sql, object param = null)
+        private async Task<IEnumerable<CountryDtoQuery>> GetCountries(string sql, object param = null, string whereExpression = null, string orderByExpression = null)
         {
+            sql = SqlHelpers.SqlBuilder(sql, whereExpression, orderByExpression);
+
             var countries = await connection.QueryAsync<CountryDtoQuery>(
                 sql, 
                 param: param, 
@@ -67,7 +80,5 @@ namespace Dapper.Repository
         {
             return await connection.GetAsync<Country>(countryId);
         }
-
-
     }
 }

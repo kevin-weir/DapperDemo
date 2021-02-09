@@ -31,13 +31,13 @@ namespace Dapper.API.Controllers
         [HttpGet("{customerId}")]
         public async Task<ActionResult<CustomerDtoQuery>> Get(int customerId)
         {
-            var result = await customerRespository.GetById(customerId);
-            if (result is null)
+            var customer = await customerRespository.GetById(customerId);
+            if (customer is null)
             {
                 return NotFound();
             }
 
-            return result;
+            return customer;
         }
 
         [HttpPost]
@@ -70,7 +70,7 @@ namespace Dapper.API.Controllers
                 return ValidationProblem(ModelState);
             }
 
-            // Get a copy of the customer entity from the respository
+            // Get a copy of the Customer entity from the respository
             var updateCustomer = await customerRespository.GetEntityById(customerId);
             if (updateCustomer is null) 
             {

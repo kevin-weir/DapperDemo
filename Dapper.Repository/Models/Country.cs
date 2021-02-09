@@ -1,10 +1,11 @@
 ﻿using System;
 using Dapper.Contrib.Extensions;
+using Dapper.Repository.Interfaces;
 
 namespace Dapper.Repository.Models
 {
     [Table("Country")]
-    public class Country
+    public class Country : IAuditable
     {
         [Key]
         public int CountryId { get; set; }

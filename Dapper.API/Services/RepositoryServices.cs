@@ -8,7 +8,10 @@ namespace Dapper.API.Services
     {
         public static void AddRepositoryServices(this IServiceCollection services)
         {
+            // TODO Is this correct scoping
             services.AddScoped<ICustomerRespository, CustomerRespository>();
+            services.AddScoped<ICountryRespository, CountryRespository>();
+            services.AddScoped<IProvinceRespository, ProvinceRespository>();
         }
     }
 }

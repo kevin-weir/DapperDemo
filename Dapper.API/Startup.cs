@@ -34,6 +34,9 @@ namespace Dapper.API
 
             // Add Swagger OpenAPI service to document the API
             services.AddOpenApiService();
+
+            // Add distributed memory caching service
+            services.AddDistributedMemoryCacheService(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

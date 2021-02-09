@@ -14,6 +14,7 @@ namespace Dapper.API.Services
             // Hopefully this is temporary.  This code prevents Dapper from pluralizing table names
             //SqlMapperExtensions.TableNameMapper = (type) => type.Name;
 
+            // TODO Is this correct scoping
             services.AddScoped<IDbConnection>(db => new SqlConnection(
                     configuration.GetConnectionString("DefaultConnection")));
         }
