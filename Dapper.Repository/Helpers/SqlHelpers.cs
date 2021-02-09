@@ -16,7 +16,7 @@ namespace Dapper.Repository.Helpers
             {
                 sqlQuery.AppendLine();
                 sqlQuery.Append("WHERE ");
-                sqlQuery.AppendLine(whereExpression);
+                sqlQuery.Append(whereExpression);
             }
 
             if (orderByExpression is not null)
