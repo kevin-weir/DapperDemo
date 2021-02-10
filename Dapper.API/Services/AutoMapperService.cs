@@ -18,6 +18,7 @@ namespace Dapper.API.Services
         {
             CreateMap<CustomerDtoInsert, Customer>();
             CreateMap<CustomerDtoUpdate, Customer>();
+            CreateMap<Customer, CustomerDtoQuery>();
 
             CreateMap<CountryDtoInsert, Country>();
             CreateMap<CountryDtoUpdate, Country>();

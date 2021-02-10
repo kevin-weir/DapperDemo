@@ -13,7 +13,7 @@ namespace Dapper.API.Services
                .AddFluentValidation(fv => {
                    fv.RegisterValidatorsFromAssemblyContaining<Customer>();
                    fv.RunDefaultMvcValidationAfterFluentValidationExecutes = true;
-                   fv.ImplicitlyValidateChildProperties = true;
+                   fv.ImplicitlyValidateChildProperties = false;
                });
         }
     }

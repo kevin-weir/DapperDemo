@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Dapper.Contrib.Extensions;
 using Dapper.Repository.Models;
 using Dapper.Repository.Services;
-using Dapper.Domain.Models;
 using Dapper.Repository.Helpers;
 
 namespace Dapper.Repository
@@ -27,7 +26,7 @@ namespace Dapper.Repository
             this.transaction = transaction;
         }
 
-        public async Task<IEnumerable<CustomerDtoQuery>> GetAll()
+        public async Task<IEnumerable<Customer>> GetAll()
         {
             var customers = await GetCustomers(
                 customerSQL,
@@ -38,7 +37,7 @@ namespace Dapper.Repository
             return customers;
         }
 
-        public async Task<CustomerDtoQuery> GetById(int customerId)
+        public async Task<Customer> GetById(int customerId)
         {
             var customers = await GetCustomers(
                 customerSQL,
@@ -49,27 +48,32 @@ namespace Dapper.Repository
             return customers.FirstOrDefault(); 
         }
 
-        private async Task<IEnumerable<CustomerDtoQuery>> GetCustomers(string sql, object param = null, string whereExpression = null, string orderByExpression = null)
+        private async Task<IEnumerable<Customer>> GetCustomers(string sql, object param = null, string whereExpression = null, string orderByExpression = null)
         {
             sql = SqlHelpers.SqlBuilder(sql, whereExpression, orderByExpression);
 
-            var customers = await connection.QueryAsync<CustomerDtoQuery, CountryDtoQuery, ProvinceDtoQuery, CustomerDtoQuery>(
+            var customers = await connection.QueryAsync<Customer, Country, Province, Customer>(
                         sql,
                         (customer, country, province) =>
                         {
                             customer.Country = country;
                             customer.Province = province;
 
+                            if (province is not null)
+                            {
+                                province.Country = country;
+                            }
+
                             return customer;
                         },
                         param: param,
                         transaction: transaction,
-                        splitOn: $"{nameof(CountryDtoQuery.CountryId)}, {nameof(ProvinceDtoQuery.ProvinceId)}");
+                        splitOn: $"{nameof(Country.CountryId)}, {nameof(Province.ProvinceId)}");
 
             return customers;
         }
 
-        public async Task<CustomerDtoQuery> Insert(Customer customer)
+        public async Task<Customer> Insert(Customer customer)
         {
             var customerId = await connection.InsertAsync<Customer>(customer, transaction);
 
@@ -84,11 +88,6 @@ namespace Dapper.Repository
         public async Task<bool> Delete(int customerId)
         {
             return await connection.DeleteAsync<Customer>(new Customer { CustomerId = customerId }, transaction);
-        }
-        
-        public async Task<Customer> GetEntityById(int customerId)
-        {
-            return await connection.GetAsync<Customer>(customerId, transaction);
         }
     }
 }

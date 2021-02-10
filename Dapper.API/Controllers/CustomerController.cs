@@ -25,7 +25,9 @@ namespace Dapper.API.Controllers
         [HttpGet]
         public async Task<IEnumerable<CustomerDtoQuery>> Get()
         {
-            return await customerRespository.GetAll();
+            var customers = await customerRespository.GetAll();
+
+            return mapper.Map<IEnumerable<CustomerDtoQuery>>(customers);
         }
 
         [HttpGet("{customerId}")]
@@ -37,7 +39,7 @@ namespace Dapper.API.Controllers
                 return NotFound();
             }
 
-            return customer;
+            return mapper.Map<CustomerDtoQuery>(customer);
         }
 
         [HttpPost]
@@ -49,14 +51,11 @@ namespace Dapper.API.Controllers
             // Apply audit changes to Customer entity
             newCustomer = Audit<Customer>.PerformAudit(newCustomer);
 
-            // Validate Customer entity using ModelState
-            if (!TryValidateModel(newCustomer))
-            {
-                return ValidationProblem(ModelState);
-            }
-
             // Insert new Customer into the respository
-            var customerDtoQuery = await customerRespository.Insert(newCustomer);
+            newCustomer = await customerRespository.Insert(newCustomer);
+
+            // Map the Customer entity to DTO response object and return in body of response
+            var customerDtoQuery = mapper.Map<CustomerDtoQuery>(newCustomer);
 
             return CreatedAtAction(nameof(Get), new { customerDtoQuery.CustomerId }, customerDtoQuery);
         }
@@ -71,7 +70,7 @@ namespace Dapper.API.Controllers
             }
 
             // Get a copy of the Customer entity from the respository
-            var updateCustomer = await customerRespository.GetEntityById(customerId);
+            var updateCustomer = await customerRespository.GetById(customerId);
             if (updateCustomer is null) 
             {
                 return NotFound();
@@ -82,12 +81,6 @@ namespace Dapper.API.Controllers
 
             // Apply audit changes to Customer entity
             updateCustomer = Audit<Customer>.PerformAudit(updateCustomer);
-
-            // Validate Customer entity using ModelState
-            if (!TryValidateModel(updateCustomer))
-            {
-                return ValidationProblem(ModelState);
-            }
 
             // Update Customer in the respository
             var isUpdated = await customerRespository.Update(updateCustomer);

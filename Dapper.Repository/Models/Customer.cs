@@ -23,7 +23,13 @@ namespace Dapper.Repository.Models
 
         public int? CountryId { get; set; }
 
+        [Write(false)]
+        public Country Country { get; set; }
+
         public int? ProvinceId { get; set; }
+
+        [Write(false)]
+        public Province Province { get; set; }
 
         public string PostalCode { get; set; }
 
