@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Dapper.Domain.Models;
 using Dapper.Repository.Models;
 
-namespace Dapper.Repository.Interfaces
+namespace Dapper.Repository.Services
 {
     public interface ICustomerRespository
     {

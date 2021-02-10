@@ -2,8 +2,8 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Dapper.Repository.Models;
+using Dapper.Repository.Services;
 using Dapper.Domain.Models;
-using Dapper.Repository.Interfaces;
 using Dapper.API.Helpers;
 using AutoMapper;
 

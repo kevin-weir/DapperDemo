@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dapper.Contrib.Extensions;
 using Dapper.Repository.Models;
-using Dapper.Repository.Interfaces;
+using Dapper.Repository.Services;
 using Dapper.Domain.Models;
 using Dapper.Repository.Helpers;
 

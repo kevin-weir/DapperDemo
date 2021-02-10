@@ -1,5 +1,5 @@
 ﻿using System;
-using Dapper.Repository.Interfaces;
+using Dapper.Repository.Services;
 
 namespace Dapper.API.Helpers
 {

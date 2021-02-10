@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Dapper.Repository;
-using Dapper.Repository.Interfaces;
+using Dapper.Repository.Services;
+using Dapper.Repository.Models;
 
 namespace Dapper.API.Services
 {
@@ -12,6 +13,7 @@ namespace Dapper.API.Services
             services.AddScoped<ICustomerRespository, CustomerRespository>();
             services.AddScoped<ICountryRespository, CountryRespository>();
             services.AddScoped<IProvinceRespository, ProvinceRespository>();
+            services.AddScoped<IOrderRespository, OrderRespository>();
         }
     }
 }

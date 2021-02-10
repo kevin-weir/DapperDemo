@@ -1,6 +1,6 @@
 ﻿using System;
 using Dapper.Contrib.Extensions;
-using Dapper.Repository.Interfaces;
+using Dapper.Repository.Services;
 
 namespace Dapper.Repository.Models
 {
@@ -11,6 +11,9 @@ namespace Dapper.Repository.Models
         public int ProvinceId { get; set; }
 
         public int CountryId { get; set; }
+
+        [Write(false)]
+        public Country Country { get; set; }
 
         public string ProvinceAbbreviation { get; set; }
 

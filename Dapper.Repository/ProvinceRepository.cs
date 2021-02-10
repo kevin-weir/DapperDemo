@@ -4,8 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dapper.Contrib.Extensions;
 using Dapper.Repository.Models;
-using Dapper.Repository.Interfaces;
-using Dapper.Domain.Models;
+using Dapper.Repository.Services;
 using Dapper.Repository.Helpers;
 
 namespace Dapper.Repository
@@ -17,7 +16,8 @@ namespace Dapper.Repository
 
         const string provinceSQL =
             @"SELECT *
-              FROM Province";
+              FROM Province
+              INNER JOIN Country ON Province.CountryId = Country.CountryId";
 
         public ProvinceRespository(IDbConnection connection, IDbTransaction transaction = null)
         {
@@ -25,7 +25,7 @@ namespace Dapper.Repository
             this.transaction = transaction;
         }
 
-        public async Task<IEnumerable<ProvinceDtoQuery>> GetAll()
+        public async Task<IEnumerable<Province>> GetAll()
         {
             var provinces = await GetProvinces(
                 provinceSQL,
@@ -36,7 +36,7 @@ namespace Dapper.Repository
             return provinces;
         }
 
-        public async Task<ProvinceDtoQuery> GetById(int provinceId)
+        public async Task<Province> GetById(int provinceId)
         {
             var provinces = await GetProvinces(
                 provinceSQL,
@@ -47,7 +47,7 @@ namespace Dapper.Repository
             return provinces.FirstOrDefault();
         }
 
-        public async Task<IEnumerable<ProvinceDtoQuery>> GetByCountryId(int countryId)
+        public async Task<IEnumerable<Province>> GetByCountryId(int countryId)
         {
             var provinces = await GetProvinces(
                 provinceSQL,
@@ -58,19 +58,25 @@ namespace Dapper.Repository
             return provinces;
         }
 
-        private async Task<IEnumerable<ProvinceDtoQuery>> GetProvinces(string sql, object param = null, string whereExpression = null, string orderByExpression = null)
+        private async Task<IEnumerable<Province>> GetProvinces(string sql, object param = null, string whereExpression = null, string orderByExpression = null)
         {
             sql = SqlHelpers.SqlBuilder(sql, whereExpression, orderByExpression);
 
-            var provinces = await connection.QueryAsync<ProvinceDtoQuery>(
-                sql, 
-                param: param, 
-                transaction: transaction);
-            
+            var provinces = await connection.QueryAsync<Province, Country, Province>(
+                        sql,
+                        (province, country) =>
+                        {
+                            province.Country = country;
+                            return province;
+                        },
+                        param: param,
+                        transaction: transaction,
+                        splitOn: $"{nameof(Country.CountryId)}");
+           
             return provinces;
         }
 
-        public async Task<ProvinceDtoQuery> Insert(Province province)
+        public async Task<Province> Insert(Province province)
         {
             var provinceId = await connection.InsertAsync<Province>(province, transaction);
 
@@ -85,11 +91,6 @@ namespace Dapper.Repository
         public async Task<bool> Delete(int provinceId)
         {
             return await connection.DeleteAsync<Province>(new Province { ProvinceId = provinceId }, transaction);
-        }
-
-        public async Task<Province> GetEntityById(int provinceId)
-        {
-            return await connection.GetAsync<Province>(provinceId);
         }
     }
 }

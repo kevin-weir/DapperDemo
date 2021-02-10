@@ -1,16 +1,14 @@
 ﻿using System;
-using Dapper.Contrib.Extensions;
-using Dapper.Repository.Services;
 
-namespace Dapper.Repository.Models
+namespace Dapper.Domain.Models
 {
-    [Table("Order")]
-    public class Order : IAuditable
+    public class OrderDtoQuery
     {
-        [Key]
         public int OrderId { get; set; }
 
         public int CustomerId { get; set; }
+
+        public CustomerDtoQuery Customer { get; set; }
 
         public string OrderNumber { get; set; }
 

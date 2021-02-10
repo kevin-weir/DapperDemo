@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Distributed;
-using Dapper.Repository.Models;
-using Dapper.Domain.Models;
-using Dapper.Repository.Interfaces;
-using Dapper.API.Helpers;
 using AutoMapper;
+using Dapper.Repository.Models;
+using Dapper.Repository.Services;
+using Dapper.Domain.Models;
+using Dapper.API.Helpers;
 
 namespace Dapper.API.Controllers
 {
@@ -15,36 +14,22 @@ namespace Dapper.API.Controllers
     public class CountryController : ControllerBase
     {
         private readonly ICountryRespository countryRespository;
+        private readonly IProvinceRespository provinceRespository;
         private readonly IMapper mapper;
-        private readonly IDistributedCache cache;
-        private const string cacheKey = nameof(CountryController) + nameof(Get) + nameof(Country);
 
-        public CountryController(ICountryRespository countryRespository, IMapper mapper, IDistributedCache cache)
+        public CountryController(ICountryRespository countryRespository, IProvinceRespository provinceRespository, IMapper mapper)
         { 
             this.countryRespository = countryRespository;
+            this.provinceRespository = provinceRespository;
             this.mapper = mapper;
-            this.cache = cache;
         }
 
         [HttpGet]
         public async Task<IEnumerable<CountryDtoQuery>> Get()
         {
-            List <CountryDtoQuery> countries;
+            var countries = await countryRespository.GetAll();
 
-            var cachedResult = await cache.GetAsync(cacheKey);
-            if (cachedResult is not null)
-            {
-                countries = Cache<List<CountryDtoQuery>>.ByteArrayToObject(cachedResult);
-            }
-            else
-            {
-                countries = (List<CountryDtoQuery>)await countryRespository.GetAll();
-                await cache.SetAsync(cacheKey, Cache<List<CountryDtoQuery>>.ObjectToByteArray(countries));
-            }
-
-            return countries;
-
-            //return await countryRespository.GetAll();
+            return mapper.Map<IEnumerable<CountryDtoQuery>>(countries);
         }
 
         [HttpGet("{countryId}")]
@@ -56,7 +41,15 @@ namespace Dapper.API.Controllers
                 return NotFound();
             }
 
-            return country;
+            return mapper.Map<CountryDtoQuery>(country);
+        }
+
+        [HttpGet("{countryId}/Province")]
+        public async Task<IEnumerable<ProvinceDtoQuery>> GetProvinces(int countryId)
+        {
+            var provinces = await provinceRespository.GetByCountryId(countryId);
+
+            return mapper.Map<IEnumerable<ProvinceDtoQuery>>(provinces);
         }
 
         [HttpPost]
@@ -68,17 +61,11 @@ namespace Dapper.API.Controllers
             // Apply audit changes to Country entity
             newCountry = Audit<Country>.PerformAudit(newCountry);
 
-            // Validate Country entity using ModelState
-            if (!TryValidateModel(newCountry))
-            {
-                return ValidationProblem(ModelState);
-            }
-
             // Insert new Country into the respository
-            var countryDtoQuery = await countryRespository.Insert(newCountry);
+            newCountry = await countryRespository.Insert(newCountry);
 
-            // Remove the cached results using cacheKey
-            await cache.RemoveAsync(cacheKey);
+            // Map the Country entity to DTO response object and return in body of response
+            var countryDtoQuery = mapper.Map<CountryDtoQuery>(newCountry);
 
             return CreatedAtAction(nameof(Get), new { countryDtoQuery.CountryId }, countryDtoQuery);
         }
@@ -93,7 +80,7 @@ namespace Dapper.API.Controllers
             }
 
             // Get a copy of the Country entity from the respository
-            var updateCountry = await countryRespository.GetEntityById(countryId);
+            var updateCountry = await countryRespository.GetById(countryId);
             if (updateCountry is null)
             {
                 return NotFound();
@@ -105,21 +92,12 @@ namespace Dapper.API.Controllers
             // Apply audit changes to Country entity
             updateCountry = Audit<Country>.PerformAudit(updateCountry);
 
-            // Validate Country entity using ModelState
-            if (!TryValidateModel(updateCountry))
-            {
-                return ValidationProblem(ModelState);
-            }
-
             // Update Country in the respository
             var isUpdated = await countryRespository.Update(updateCountry);
             if (!isUpdated)
             {
                 return NotFound();
             }
-
-            // Remove the cached results using cacheKey
-            await cache.RemoveAsync(cacheKey);
 
             return Ok();
         }
@@ -132,9 +110,6 @@ namespace Dapper.API.Controllers
             {
                 return NotFound();
             }
-
-            // Remove the cached results using cacheKey
-            await cache.RemoveAsync(cacheKey);
 
             return Ok();
         }

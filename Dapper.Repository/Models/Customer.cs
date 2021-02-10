@@ -1,6 +1,6 @@
 ﻿using System;
 using FluentValidation;
-using Dapper.Repository.Interfaces;
+using Dapper.Repository.Services;
 using Dapper.Contrib.Extensions;
 
 namespace Dapper.Repository.Models

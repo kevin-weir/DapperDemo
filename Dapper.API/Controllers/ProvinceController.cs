@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Dapper.Repository.Models;
-using Dapper.Domain.Models;
-using Dapper.Repository.Interfaces;
-using Dapper.API.Helpers;
 using AutoMapper;
+using Dapper.Repository.Models;
+using Dapper.Repository.Services;
+using Dapper.Domain.Models;
+using Dapper.API.Helpers;
 
 namespace Dapper.API.Controllers
 {
@@ -25,7 +25,9 @@ namespace Dapper.API.Controllers
         [HttpGet]
         public async Task<IEnumerable<ProvinceDtoQuery>> Get()
         {
-            return await provinceRespository.GetAll();
+            var provinces = await provinceRespository.GetAll();
+
+            return mapper.Map<IEnumerable<ProvinceDtoQuery>>(provinces);
         }
 
         [HttpGet("{provinceId}")]
@@ -37,13 +39,7 @@ namespace Dapper.API.Controllers
                 return NotFound();
             }
 
-            return province;
-        }
-
-        [HttpGet("country/{countryId}")]
-        public async Task<IEnumerable<ProvinceDtoQuery>> GetByCountryId(int countryId)
-        {
-            return await provinceRespository.GetByCountryId(countryId);
+            return mapper.Map<ProvinceDtoQuery>(province);
         }
 
         [HttpPost]
@@ -55,14 +51,11 @@ namespace Dapper.API.Controllers
             // Apply audit changes to Province entity
             newProvince = Audit<Province>.PerformAudit(newProvince);
 
-            // Validate Province entity using ModelState
-            if (!TryValidateModel(newProvince))
-            {
-                return ValidationProblem(ModelState);
-            }
-
             // Insert new Province into the respository
-            var provinceDtoQuery = await provinceRespository.Insert(newProvince);
+            newProvince = await provinceRespository.Insert(newProvince);
+
+            // Map the Province entity to DTO response object and return in body of response
+            var provinceDtoQuery = mapper.Map<ProvinceDtoQuery>(newProvince);
 
             return CreatedAtAction(nameof(Get), new { provinceDtoQuery.ProvinceId }, provinceDtoQuery);
         }
@@ -77,7 +70,7 @@ namespace Dapper.API.Controllers
             }
 
             // Get a copy of the Province entity from the respository
-            var updateProvince = await provinceRespository.GetEntityById(provinceId);
+            var updateProvince = await provinceRespository.GetById(provinceId);
             if (updateProvince is null)
             {
                 return NotFound();
@@ -88,12 +81,6 @@ namespace Dapper.API.Controllers
 
             // Apply audit changes to Province entity
             updateProvince = Audit<Province>.PerformAudit(updateProvince);
-
-            // Validate Province entity using ModelState
-            if (!TryValidateModel(updateProvince))
-            {
-                return ValidationProblem(ModelState);
-            }
 
             // Update Province in the respository
             var isUpdated = await provinceRespository.Update(updateProvince);

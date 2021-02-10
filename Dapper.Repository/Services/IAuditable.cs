@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Dapper.Repository.Interfaces
+namespace Dapper.Repository.Services
 {
     public interface IAuditable
     {

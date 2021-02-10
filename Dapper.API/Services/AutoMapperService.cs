@@ -21,9 +21,11 @@ namespace Dapper.API.Services
 
             CreateMap<CountryDtoInsert, Country>();
             CreateMap<CountryDtoUpdate, Country>();
+            CreateMap<Country, CountryDtoQuery>();
 
             CreateMap<ProvinceDtoInsert, Province>();
             CreateMap<ProvinceDtoUpdate, Province>();
+            CreateMap<Province, ProvinceDtoQuery>();
         }
     }
 }

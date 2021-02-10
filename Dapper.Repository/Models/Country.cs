@@ -1,6 +1,6 @@
 ﻿using System;
 using Dapper.Contrib.Extensions;
-using Dapper.Repository.Interfaces;
+using Dapper.Repository.Services;
 
 namespace Dapper.Repository.Models
 {
