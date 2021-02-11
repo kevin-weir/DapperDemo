@@ -53,10 +53,10 @@ namespace Dapper.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<CountryResponseDTO>> Post(CountryPostDTO dtoCountry)
+        public async Task<ActionResult<CountryResponseDTO>> Post(CountryPostDTO countryPostDTO)
         {
-            // Map dtoCountry to repositories Country entity
-            var newCountry = mapper.Map<Country>(dtoCountry);
+            // Map countryPostDTO to repositories Country entity
+            var newCountry = mapper.Map<Country>(countryPostDTO);
 
             // Apply audit changes to Country entity
             newCountry = Audit<Country>.PerformAudit(newCountry);

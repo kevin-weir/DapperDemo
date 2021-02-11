@@ -53,10 +53,10 @@ namespace Dapper.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<CustomerResponseDTO>> Post(CustomerPostDTO dtoCustomer)
+        public async Task<ActionResult<CustomerResponseDTO>> Post(CustomerPostDTO customerPostDTO)
         {
-            // Map dtoCustomer to repositories Customer entity
-            var newCustomer = mapper.Map<Customer>(dtoCustomer);
+            // Map customerPostDTO to repositories Customer entity
+            var newCustomer = mapper.Map<Customer>(customerPostDTO);
 
             // Apply audit changes to Customer entity
             newCustomer = Audit<Customer>.PerformAudit(newCustomer);

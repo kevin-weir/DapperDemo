@@ -43,10 +43,10 @@ namespace Dapper.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ProvinceResponseDTO>> Post(ProvincePostDTO dtoProvince)
+        public async Task<ActionResult<ProvinceResponseDTO>> Post(ProvincePostDTO provincePostDTO)
         {
-            // Map dtoProvince to repositories Province entity
-            var newProvince = mapper.Map<Province>(dtoProvince);
+            // Map provincePostDTO to repositories Province entity
+            var newProvince = mapper.Map<Province>(provincePostDTO);
 
             // Apply audit changes to Province entity
             newProvince = Audit<Province>.PerformAudit(newProvince);
