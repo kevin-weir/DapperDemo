@@ -23,7 +23,7 @@ namespace Dapper.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<ProvinceResponseDTO>> Get()
+        public async Task<IEnumerable<ProvinceResponseDTO>> GetAll()
         {
             var provinces = await provinceRespository.GetAll();
 
@@ -31,7 +31,7 @@ namespace Dapper.API.Controllers
         }
 
         [HttpGet("{provinceId}")]
-        public async Task<ActionResult<ProvinceResponseDTO>> Get(int provinceId)
+        public async Task<ActionResult<ProvinceResponseDTO>> GetById(int provinceId)
         {
             var province = await provinceRespository.GetById(provinceId);
             if (province is null)
@@ -43,7 +43,7 @@ namespace Dapper.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ProvinceResponseDTO>> Post(ProvincePostDTO provincePostDTO)
+        public async Task<ActionResult<ProvinceResponseDTO>> Insert(ProvincePostDTO provincePostDTO)
         {
             // Map provincePostDTO to repositories Province entity
             var newProvince = mapper.Map<Province>(provincePostDTO);
@@ -57,11 +57,11 @@ namespace Dapper.API.Controllers
             // Map the Province entity to DTO response object and return in body of response
             var provinceResponseDTO = mapper.Map<ProvinceResponseDTO>(newProvince);
 
-            return CreatedAtAction(nameof(Get), new { provinceResponseDTO.ProvinceId }, provinceResponseDTO);
+            return CreatedAtAction(nameof(GetById), new { provinceResponseDTO.ProvinceId }, provinceResponseDTO);
         }
 
         [HttpPut("{provinceId}")]
-        public async Task<ActionResult> Put(int provinceId, ProvincePutDTO dtoProvince)
+        public async Task<ActionResult> Update(int provinceId, ProvincePutDTO dtoProvince)
         {
             if (provinceId != dtoProvince.ProvinceId)
             {

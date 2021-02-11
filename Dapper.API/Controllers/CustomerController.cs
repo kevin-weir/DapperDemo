@@ -25,7 +25,7 @@ namespace Dapper.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<CustomerResponseDTO>> Get()
+        public async Task<IEnumerable<CustomerResponseDTO>> GetAll()
         {
             var customers = await customerRespository.GetAll();
 
@@ -33,7 +33,7 @@ namespace Dapper.API.Controllers
         }
 
         [HttpGet("{customerId}")]
-        public async Task<ActionResult<CustomerResponseDTO>> Get(int customerId)
+        public async Task<ActionResult<CustomerResponseDTO>> GetById(int customerId)
         {
             var customer = await customerRespository.GetById(customerId);
             if (customer is null)
@@ -53,7 +53,7 @@ namespace Dapper.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<CustomerResponseDTO>> Post(CustomerPostDTO customerPostDTO)
+        public async Task<ActionResult<CustomerResponseDTO>> Insert(CustomerPostDTO customerPostDTO)
         {
             // Map customerPostDTO to repositories Customer entity
             var newCustomer = mapper.Map<Customer>(customerPostDTO);
@@ -67,11 +67,11 @@ namespace Dapper.API.Controllers
             // Map the Customer entity to DTO response object and return in body of response
             var customerResponseDTO = mapper.Map<CustomerResponseDTO>(newCustomer);
 
-            return CreatedAtAction(nameof(Get), new { customerResponseDTO.CustomerId }, customerResponseDTO);
+            return CreatedAtAction(nameof(GetById), new { customerResponseDTO.CustomerId }, customerResponseDTO);
         }
 
         [HttpPut("{customerId}")]
-        public async Task<ActionResult> Put(int customerId, CustomerPutDTO dtoCustomer)
+        public async Task<ActionResult> Update(int customerId, CustomerPutDTO dtoCustomer)
         {
             if (customerId != dtoCustomer.CustomerId)
             {
