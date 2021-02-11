@@ -8,7 +8,6 @@ namespace Dapper.API.Controllers
 {
     [ApiController]
     [ApiExplorerSettings(IgnoreApi = true)]
-    //[Authorize]
     public class ErrorController : ControllerBase
     {
         [Route("/error")]
