@@ -1,9 +1,7 @@
 ﻿namespace Dapper.Domain.Models
 {
-    public class ProvinceDtoUpdate
+    public class ProvincePostDTO
     {
-        public int ProvinceId { get; set; }
-
         public int CountryId { get; set; }
 
         public string ProvinceAbbreviation { get; set; }

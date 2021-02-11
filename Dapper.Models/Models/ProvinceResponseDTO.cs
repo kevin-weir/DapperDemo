@@ -2,13 +2,17 @@
 
 namespace Dapper.Domain.Models
 {
-    public class CountryDtoQuery
+    public class ProvinceResponseDTO
     {
+        public int ProvinceId { get; set; }
+
         public int CountryId { get; set; }
 
-        public string CountryAbbreviation { get; set; }
+        public CountryResponseDTO Country { get; set; }
 
-        public string CountryName { get; set; }
+        public string ProvinceAbbreviation { get; set; }
+
+        public string ProvinceName { get; set; }
 
         public string CreatedBy { get; set; }
 

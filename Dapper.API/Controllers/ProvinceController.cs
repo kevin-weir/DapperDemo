@@ -23,15 +23,15 @@ namespace Dapper.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<ProvinceDtoQuery>> Get()
+        public async Task<IEnumerable<ProvinceResponseDTO>> Get()
         {
             var provinces = await provinceRespository.GetAll();
 
-            return mapper.Map<IEnumerable<ProvinceDtoQuery>>(provinces);
+            return mapper.Map<IEnumerable<ProvinceResponseDTO>>(provinces);
         }
 
         [HttpGet("{provinceId}")]
-        public async Task<ActionResult<ProvinceDtoQuery>> Get(int provinceId)
+        public async Task<ActionResult<ProvinceResponseDTO>> Get(int provinceId)
         {
             var province = await provinceRespository.GetById(provinceId);
             if (province is null)
@@ -39,11 +39,11 @@ namespace Dapper.API.Controllers
                 return NotFound();
             }
 
-            return mapper.Map<ProvinceDtoQuery>(province);
+            return mapper.Map<ProvinceResponseDTO>(province);
         }
 
         [HttpPost]
-        public async Task<ActionResult<ProvinceDtoQuery>> Post(ProvinceDtoInsert dtoProvince)
+        public async Task<ActionResult<ProvinceResponseDTO>> Post(ProvincePostDTO dtoProvince)
         {
             // Map dtoProvince to repositories Province entity
             var newProvince = mapper.Map<Province>(dtoProvince);
@@ -55,13 +55,13 @@ namespace Dapper.API.Controllers
             newProvince = await provinceRespository.Insert(newProvince);
 
             // Map the Province entity to DTO response object and return in body of response
-            var provinceDtoQuery = mapper.Map<ProvinceDtoQuery>(newProvince);
+            var provinceResponseDTO = mapper.Map<ProvinceResponseDTO>(newProvince);
 
-            return CreatedAtAction(nameof(Get), new { provinceDtoQuery.ProvinceId }, provinceDtoQuery);
+            return CreatedAtAction(nameof(Get), new { provinceResponseDTO.ProvinceId }, provinceResponseDTO);
         }
 
         [HttpPut("{provinceId}")]
-        public async Task<ActionResult> Put(int provinceId, ProvinceDtoUpdate dtoProvince)
+        public async Task<ActionResult> Put(int provinceId, ProvincePutDTO dtoProvince)
         {
             if (provinceId != dtoProvince.ProvinceId)
             {

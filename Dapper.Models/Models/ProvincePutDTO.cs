@@ -1,7 +1,9 @@
 ﻿namespace Dapper.Domain.Models
 {
-    public class ProvinceDtoInsert
+    public class ProvincePutDTO
     {
+        public int ProvinceId { get; set; }
+
         public int CountryId { get; set; }
 
         public string ProvinceAbbreviation { get; set; }

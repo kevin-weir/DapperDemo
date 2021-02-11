@@ -2,13 +2,13 @@
 
 namespace Dapper.Domain.Models
 {
-    public class OrderDtoQuery
+    public class OrderResponseDTO
     {
         public int OrderId { get; set; }
 
         public int CustomerId { get; set; }
 
-        public CustomerDtoQuery Customer { get; set; }
+        public CustomerResponseDTO Customer { get; set; }
 
         public string OrderNumber { get; set; }
 

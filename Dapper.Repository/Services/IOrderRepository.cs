@@ -8,7 +8,7 @@ namespace Dapper.Repository.Services
 {
     public interface IOrderRespository
     {
-        Task<PagedResults<OrderDtoQuery>> GetByCustomerId(int customerId, int page, int pageSize);
+        Task<PagedResults<OrderResponseDTO>> GetByCustomerId(int customerId, int page, int pageSize);
 
         //Task<OrderDtoQuery> GetById(int orderId);
 

@@ -25,15 +25,15 @@ namespace Dapper.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<CustomerDtoQuery>> Get()
+        public async Task<IEnumerable<CustomerResponseDTO>> Get()
         {
             var customers = await customerRespository.GetAll();
 
-            return mapper.Map<IEnumerable<CustomerDtoQuery>>(customers);
+            return mapper.Map<IEnumerable<CustomerResponseDTO>>(customers);
         }
 
         [HttpGet("{customerId}")]
-        public async Task<ActionResult<CustomerDtoQuery>> Get(int customerId)
+        public async Task<ActionResult<CustomerResponseDTO>> Get(int customerId)
         {
             var customer = await customerRespository.GetById(customerId);
             if (customer is null)
@@ -41,11 +41,11 @@ namespace Dapper.API.Controllers
                 return NotFound();
             }
 
-            return mapper.Map<CustomerDtoQuery>(customer);
+            return mapper.Map<CustomerResponseDTO>(customer);
         }
 
         [HttpGet("{customerId}/Order")]
-        public async Task<PagedResults<OrderDtoQuery>> GetOrders(int customerId, int page= 1, int pageSize = 10)
+        public async Task<PagedResults<OrderResponseDTO>> GetOrders(int customerId, int page= 1, int pageSize = 10)
        {
             //var orders = await orderRespository.GetByCustomerId(customerId, page, pageSize);
             //return mapper.Map<IEnumerable<ProvinceDtoQuery>>(provinces);
@@ -53,7 +53,7 @@ namespace Dapper.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<CustomerDtoQuery>> Post(CustomerDtoInsert dtoCustomer)
+        public async Task<ActionResult<CustomerResponseDTO>> Post(CustomerPostDTO dtoCustomer)
         {
             // Map dtoCustomer to repositories Customer entity
             var newCustomer = mapper.Map<Customer>(dtoCustomer);
@@ -65,13 +65,13 @@ namespace Dapper.API.Controllers
             newCustomer = await customerRespository.Insert(newCustomer);
 
             // Map the Customer entity to DTO response object and return in body of response
-            var customerDtoQuery = mapper.Map<CustomerDtoQuery>(newCustomer);
+            var customerResponseDTO = mapper.Map<CustomerResponseDTO>(newCustomer);
 
-            return CreatedAtAction(nameof(Get), new { customerDtoQuery.CustomerId }, customerDtoQuery);
+            return CreatedAtAction(nameof(Get), new { customerResponseDTO.CustomerId }, customerResponseDTO);
         }
 
         [HttpPut("{customerId}")]
-        public async Task<ActionResult> Put(int customerId, CustomerDtoUpdate dtoCustomer)
+        public async Task<ActionResult> Put(int customerId, CustomerPutDTO dtoCustomer)
         {
             if (customerId != dtoCustomer.CustomerId)
             {

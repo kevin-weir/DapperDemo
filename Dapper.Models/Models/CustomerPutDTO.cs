@@ -1,8 +1,6 @@
-﻿using System;
-
-namespace Dapper.Domain.Models
+﻿namespace Dapper.Domain.Models
 {
-    public class CustomerDtoQuery
+    public class CustomerPutDTO
     {
         public int CustomerId { get; set; }
 
@@ -22,24 +20,12 @@ namespace Dapper.Domain.Models
         /// <example>"null"</example> 
         public int? CountryId { get; set; }
 
-        public CountryDtoQuery Country { get; set; }
-
         /// <summary>
         /// The province where the customer resides
         /// </summary>
         /// <example>"null"</example> 
         public int? ProvinceId { get; set; }
 
-        public ProvinceDtoQuery Province { get; set; }
-
         public string PostalCode { get; set; }
-
-        public string CreatedBy { get; set; }
-
-        public DateTime? CreatedDateTime { get; set; }
-
-        public string ModifiedBy { get; set; }
-
-        public DateTime? ModifiedDateTime { get; set; }
     }
 }

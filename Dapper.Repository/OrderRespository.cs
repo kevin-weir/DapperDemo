@@ -39,7 +39,7 @@ namespace Dapper.Repository
         //    return orders;
         //}
 
-        public async Task<PagedResults<OrderDtoQuery>> GetByCustomerId(int customerId, int page= 1, int pageSize = 10)
+        public async Task<PagedResults<OrderResponseDTO>> GetByCustomerId(int customerId, int page= 1, int pageSize = 10)
         {
             var orders = await GetOrders(
                 orderSQL,
@@ -65,7 +65,7 @@ namespace Dapper.Repository
         //    return orders.FirstOrDefault(); 
         //}
 
-        private async Task<PagedResults<OrderDtoQuery>> GetOrders(string sql, object param = null, string whereExpression = null, string orderByExpression = null, int? page = null, int? pageSize = null)
+        private async Task<PagedResults<OrderResponseDTO>> GetOrders(string sql, object param = null, string whereExpression = null, string orderByExpression = null, int? page = null, int? pageSize = null)
         {
             sql = SqlHelpers.SqlBuilder(sql, whereExpression, orderByExpression, page, pageSize);
 

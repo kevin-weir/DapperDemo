@@ -16,17 +16,17 @@ namespace Dapper.API.Services
     {
         public AutoMapperProfile()
         {
-            CreateMap<CustomerDtoInsert, Customer>();
-            CreateMap<CustomerDtoUpdate, Customer>();
-            CreateMap<Customer, CustomerDtoQuery>();
+            CreateMap<CustomerPostDTO, Customer>();
+            CreateMap<CustomerPutDTO, Customer>();
+            CreateMap<Customer, CustomerResponseDTO>();
 
-            CreateMap<CountryDtoInsert, Country>();
-            CreateMap<CountryDtoUpdate, Country>();
-            CreateMap<Country, CountryDtoQuery>();
+            CreateMap<CountryPostDTO, Country>();
+            CreateMap<CountryPutDTO, Country>();
+            CreateMap<Country, CountryResponseDTO>();
 
-            CreateMap<ProvinceDtoInsert, Province>();
-            CreateMap<ProvinceDtoUpdate, Province>();
-            CreateMap<Province, ProvinceDtoQuery>();
+            CreateMap<ProvincePostDTO, Province>();
+            CreateMap<ProvincePutDTO, Province>();
+            CreateMap<Province, ProvinceResponseDTO>();
         }
     }
 }

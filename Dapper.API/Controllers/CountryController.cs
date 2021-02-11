@@ -25,15 +25,15 @@ namespace Dapper.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<CountryDtoQuery>> Get()
+        public async Task<IEnumerable<CountryResponseDTO>> Get()
         {
             var countries = await countryRespository.GetAll();
 
-            return mapper.Map<IEnumerable<CountryDtoQuery>>(countries);
+            return mapper.Map<IEnumerable<CountryResponseDTO>>(countries);
         }
 
         [HttpGet("{countryId}")]
-        public async Task<ActionResult<CountryDtoQuery>> Get(int countryId)
+        public async Task<ActionResult<CountryResponseDTO>> Get(int countryId)
         {
             var country = await countryRespository.GetById(countryId);
             if (country is null)
@@ -41,19 +41,19 @@ namespace Dapper.API.Controllers
                 return NotFound();
             }
 
-            return mapper.Map<CountryDtoQuery>(country);
+            return mapper.Map<CountryResponseDTO>(country);
         }
 
         [HttpGet("{countryId}/Province")]
-        public async Task<IEnumerable<ProvinceDtoQuery>> GetProvinces(int countryId)
+        public async Task<IEnumerable<ProvinceResponseDTO>> GetProvinces(int countryId)
         {
             var provinces = await provinceRespository.GetByCountryId(countryId);
 
-            return mapper.Map<IEnumerable<ProvinceDtoQuery>>(provinces);
+            return mapper.Map<IEnumerable<ProvinceResponseDTO>>(provinces);
         }
 
         [HttpPost]
-        public async Task<ActionResult<CountryDtoQuery>> Post(CountryDtoInsert dtoCountry)
+        public async Task<ActionResult<CountryResponseDTO>> Post(CountryPostDTO dtoCountry)
         {
             // Map dtoCountry to repositories Country entity
             var newCountry = mapper.Map<Country>(dtoCountry);
@@ -65,13 +65,13 @@ namespace Dapper.API.Controllers
             newCountry = await countryRespository.Insert(newCountry);
 
             // Map the Country entity to DTO response object and return in body of response
-            var countryDtoQuery = mapper.Map<CountryDtoQuery>(newCountry);
+            var countryResponseDTO = mapper.Map<CountryResponseDTO>(newCountry);
 
-            return CreatedAtAction(nameof(Get), new { countryDtoQuery.CountryId }, countryDtoQuery);
+            return CreatedAtAction(nameof(Get), new { countryResponseDTO.CountryId }, countryResponseDTO);
         }
 
         [HttpPut("{countryId}")]
-        public async Task<ActionResult> Put(int countryId, CountryDtoUpdate dtoCountry)
+        public async Task<ActionResult> Put(int countryId, CountryPutDTO dtoCountry)
         {
             if (countryId != dtoCountry.CountryId)
             {

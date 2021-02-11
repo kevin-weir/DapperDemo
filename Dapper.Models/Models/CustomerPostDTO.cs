@@ -1,6 +1,6 @@
 ﻿namespace Dapper.Domain.Models
 {
-    public class CustomerDtoInsert
+    public class CustomerPostDTO
     {
         public string FirstName { get; set; }
 

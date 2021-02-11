@@ -1,6 +1,8 @@
-﻿namespace Dapper.Domain.Models
+﻿using System;
+
+namespace Dapper.Domain.Models
 {
-    public class CustomerDtoUpdate
+    public class CustomerResponseDTO
     {
         public int CustomerId { get; set; }
 
@@ -20,12 +22,24 @@
         /// <example>"null"</example> 
         public int? CountryId { get; set; }
 
+        public CountryResponseDTO Country { get; set; }
+
         /// <summary>
         /// The province where the customer resides
         /// </summary>
         /// <example>"null"</example> 
         public int? ProvinceId { get; set; }
 
+        public ProvinceResponseDTO Province { get; set; }
+
         public string PostalCode { get; set; }
+
+        public string CreatedBy { get; set; }
+
+        public DateTime? CreatedDateTime { get; set; }
+
+        public string ModifiedBy { get; set; }
+
+        public DateTime? ModifiedDateTime { get; set; }
     }
 }

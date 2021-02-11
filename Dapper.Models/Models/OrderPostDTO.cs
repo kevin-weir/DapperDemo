@@ -2,10 +2,8 @@
 
 namespace Dapper.Domain.Models
 {
-    public class OrderDtoUpdate
+    public class OrderPostDTO
     {
-        public int OrderId { get; set; }
-
         public int CustomerId { get; set; }
 
         public string OrderNumber { get; set; }

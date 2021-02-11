@@ -3,17 +3,17 @@
 namespace Dapper.Domain.Models
 {
     // ********** Customer Validation Start **********
-    public class CustomerDtoInsertValidator : AbstractValidator<CustomerDtoInsert>
+    public class CustomerPostDTOValidator : AbstractValidator<CustomerPostDTO>
     {
-        public CustomerDtoInsertValidator()
+        public CustomerPostDTOValidator()
         {
             RuleFor(x => x.FirstName).NotEmpty().WithMessage("Please enter the customers first name");
             RuleFor(x => x.FirstName).Length(0, 50).WithMessage("Please enter a first name no longer than 50 characters");
         }
     }
-    public class CustomerDtoUpdateValidator : AbstractValidator<CustomerDtoUpdate>
+    public class CustomerPutDTOValidator : AbstractValidator<CustomerPutDTO>
     {
-        public CustomerDtoUpdateValidator()
+        public CustomerPutDTOValidator()
         {
             RuleFor(x => x.FirstName).NotEmpty().WithMessage("Please enter the customers first name");
             RuleFor(x => x.FirstName).Length(0, 50).WithMessage("Please enter a first name no longer than 50 characters");

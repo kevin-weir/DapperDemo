@@ -11,7 +11,7 @@ namespace Dapper.API.Services
             // TODO Find a better way for FleuntValidation to find assembly with validation rules
             services.AddControllers()
                .AddFluentValidation(fv => {
-                   fv.RegisterValidatorsFromAssemblyContaining<CustomerDtoInsert>();
+                   fv.RegisterValidatorsFromAssemblyContaining<CustomerPostDTO>();
                    fv.RunDefaultMvcValidationAfterFluentValidationExecutes = true;
                    fv.ImplicitlyValidateChildProperties = false;
                });
