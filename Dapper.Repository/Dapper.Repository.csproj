@@ -10,7 +10,6 @@
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.0.78" />
     <PackageReference Include="Dapper.Contrib" Version="2.0.78" />
-    <PackageReference Include="FluentValidation.AspNetCore" Version="9.5.0" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="2.1.1" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="5.0.0" />
   </ItemGroup>

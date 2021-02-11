@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using FluentValidation.AspNetCore;
-using Dapper.Repository.Models;
+using Dapper.Domain.Models;
 
 namespace Dapper.API.Services
 {
@@ -11,7 +11,7 @@ namespace Dapper.API.Services
             // TODO Find a better way for FleuntValidation to find assembly with validation rules
             services.AddControllers()
                .AddFluentValidation(fv => {
-                   fv.RegisterValidatorsFromAssemblyContaining<Customer>();
+                   fv.RegisterValidatorsFromAssemblyContaining<CustomerDtoInsert>();
                    fv.RunDefaultMvcValidationAfterFluentValidationExecutes = true;
                    fv.ImplicitlyValidateChildProperties = false;
                });

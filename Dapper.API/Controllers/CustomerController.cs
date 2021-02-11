@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using AutoMapper;
 using Dapper.Repository.Models;
 using Dapper.Repository.Services;
 using Dapper.Domain.Models;
 using Dapper.API.Helpers;
-using AutoMapper;
 
 namespace Dapper.API.Controllers
 {
@@ -14,11 +14,13 @@ namespace Dapper.API.Controllers
     public class CustomerController : ControllerBase
     {
         private readonly ICustomerRespository customerRespository;
+        private readonly IOrderRespository orderRespository;
         private readonly IMapper mapper;
 
-        public CustomerController(ICustomerRespository customerRespository, IMapper mapper)
+        public CustomerController(ICustomerRespository customerRespository, IOrderRespository orderRespository, IMapper mapper)
         {
             this.customerRespository = customerRespository;
+            this.orderRespository = orderRespository;
             this.mapper = mapper;
         }
 
@@ -40,6 +42,14 @@ namespace Dapper.API.Controllers
             }
 
             return mapper.Map<CustomerDtoQuery>(customer);
+        }
+
+        [HttpGet("{customerId}/Order")]
+        public async Task<PagedResults<OrderDtoQuery>> GetOrders(int customerId, int page= 1, int pageSize = 10)
+       {
+            //var orders = await orderRespository.GetByCustomerId(customerId, page, pageSize);
+            //return mapper.Map<IEnumerable<ProvinceDtoQuery>>(provinces);
+            return null;
         }
 
         [HttpPost]

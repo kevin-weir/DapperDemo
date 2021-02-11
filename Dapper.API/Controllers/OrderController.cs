@@ -23,14 +23,14 @@ namespace Dapper.API.Controllers
             this.mapper = mapper;
         }
 
-        [HttpGet("paging")]
-        public async Task<PagedResults<OrderDtoQuery>> GetByCustomerId(int customerId, int page, int pageSize)
-        {
-            var orders = await orderRespository.GetByCustomerId(customerId, page, pageSize);
+        //[HttpGet("paging")]
+        //public async Task<PagedResults<OrderDtoQuery>> GetByCustomerId(int customerId, int page, int pageSize)
+        //{
+        //    var orders = await orderRespository.GetByCustomerId(customerId, page, pageSize);
 
-            return null;
-            //return await customerRespository.GetAll();
-        }
+        //    return null;
+        //    //return await customerRespository.GetAll();
+        //}
 
         //[HttpGet("{customerId}")]
         //public async Task<ActionResult<CustomerDtoQuery>> Get(int customerId)

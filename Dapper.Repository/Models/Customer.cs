@@ -1,5 +1,4 @@
 ﻿using System;
-using FluentValidation;
 using Dapper.Repository.Services;
 using Dapper.Contrib.Extensions;
 
@@ -40,14 +39,5 @@ namespace Dapper.Repository.Models
         public string ModifiedBy { get; set; }
 
         public DateTime? ModifiedDateTime { get; set; }
-    }
-
-    public class CustomerValidator : AbstractValidator<Customer>
-    {
-        public CustomerValidator()
-        {
-            RuleFor(x => x.FirstName).NotEmpty().WithMessage("Please enter the customers first name");
-            RuleFor(x => x.FirstName).Length(0, 50).WithMessage("Please enter a first name no longer than 50 characters");
-        }
     }
 }
