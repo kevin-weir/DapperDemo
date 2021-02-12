@@ -71,9 +71,9 @@ namespace Dapper.API.Controllers
         }
 
         [HttpPut("{customerId}")]
-        public async Task<ActionResult> Put(int customerId, CustomerPutDTO dtoCustomer)
+        public async Task<ActionResult> Put(int customerId, CustomerPutDTO customerPutDTO)
         {
-            if (customerId != dtoCustomer.CustomerId)
+            if (customerId != customerPutDTO.CustomerId)
             {
                 ModelState.AddModelError("CustomerId", "The Parameter CustomerId and the CustomerId from the body do not match.");
                 return ValidationProblem(ModelState);
@@ -86,8 +86,8 @@ namespace Dapper.API.Controllers
                 return NotFound();
             }
 
-            // Map dtoCustomer to the repositories Customer entity
-            updateCustomer = mapper.Map(dtoCustomer, updateCustomer);
+            // Map customerPutDTO to the repositories Customer entity
+            updateCustomer = mapper.Map(customerPutDTO, updateCustomer);
 
             // Apply audit changes to Customer entity
             updateCustomer = Audit<Customer>.PerformAudit(updateCustomer);

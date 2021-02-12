@@ -61,9 +61,9 @@ namespace Dapper.API.Controllers
         }
 
         [HttpPut("{provinceId}")]
-        public async Task<ActionResult> Put(int provinceId, ProvincePutDTO dtoProvince)
+        public async Task<ActionResult> Put(int provinceId, ProvincePutDTO provincePutDTO)
         {
-            if (provinceId != dtoProvince.ProvinceId)
+            if (provinceId != provincePutDTO.ProvinceId)
             {
                 ModelState.AddModelError("ProvinceId", "The Parameter ProvinceId and the ProvinceId from the body do not match.");
                 return ValidationProblem(ModelState);
@@ -76,8 +76,8 @@ namespace Dapper.API.Controllers
                 return NotFound();
             }
 
-            // Map dtoProvince to the repositories Province entity
-            updateProvince = mapper.Map(dtoProvince, updateProvince);
+            // Map provincePutDTO to the repositories Province entity
+            updateProvince = mapper.Map(provincePutDTO, updateProvince);
 
             // Apply audit changes to Province entity
             updateProvince = Audit<Province>.PerformAudit(updateProvince);
