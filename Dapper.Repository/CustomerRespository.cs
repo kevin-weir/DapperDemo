@@ -59,11 +59,6 @@ namespace Dapper.Repository
                             customer.Country = country;
                             customer.Province = province;
 
-                            if (province is not null)
-                            {
-                                province.Country = country;
-                            }
-
                             return customer;
                         },
                         param: param,
