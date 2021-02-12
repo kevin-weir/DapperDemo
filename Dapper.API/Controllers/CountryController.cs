@@ -71,9 +71,9 @@ namespace Dapper.API.Controllers
         }
 
         [HttpPut("{countryId}")]
-        public async Task<ActionResult> Put(int countryId, CountryPutDTO dtoCountry)
+        public async Task<ActionResult> Put(int countryId, CountryPutDTO countryPutDTO)
         {
-            if (countryId != dtoCountry.CountryId)
+            if (countryId != countryPutDTO.CountryId)
             {
                 ModelState.AddModelError("CountryId", "The Parameter CountryId and the CountryId from the body do not match.");
                 return ValidationProblem(ModelState);
@@ -86,8 +86,8 @@ namespace Dapper.API.Controllers
                 return NotFound();
             }
 
-            // Map dtoCountry to the repositories Country entity
-            updateCountry = mapper.Map(dtoCountry, updateCountry);
+            // Map countryPutDTO to the repositories Country entity
+            updateCountry = mapper.Map(countryPutDTO, updateCountry);
 
             // Apply audit changes to Country entity
             updateCountry = Audit<Country>.PerformAudit(updateCountry);
