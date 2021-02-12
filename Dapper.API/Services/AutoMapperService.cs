@@ -27,6 +27,13 @@ namespace Dapper.API.Services
             CreateMap<ProvincePostDTO, Province>();
             CreateMap<ProvincePutDTO, Province>();
             CreateMap<Province, ProvinceResponseDTO>();
+
+            CreateMap<OrderPostDTO, Order>();
+            CreateMap<OrderPutDTO, Order>();
+            CreateMap<Order, OrderResponseDTO>();
+
+            // Paged mappings
+            CreateMap<PagedResults<Order>, PagedResults<OrderResponseDTO>>();
         }
     }
 }

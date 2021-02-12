@@ -1,23 +1,21 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Dapper.Domain.Models;
 using Dapper.Repository.Models;
-using Dapper.Repository.Helpers;
 
 namespace Dapper.Repository.Services
 {
     public interface IOrderRespository
     {
-        Task<PagedResults<OrderResponseDTO>> GetByCustomerId(int customerId, int page, int pageSize);
+        Task<PagedResults<Order>> GetAll(int page = 1, int pageSize = 10);
 
-        //Task<OrderDtoQuery> GetById(int orderId);
+        Task<Order> GetById(int orderId);
 
-        //Task<OrderDtoQuery> Insert(Order order);
+        Task<PagedResults<Order>> GetByCustomerId(int customerId, int page, int pageSize);
+
+        Task<Order> Insert(Order order);
 
         Task<bool> Update(Order order);
 
         Task<bool> Delete(int orderId);
-
-        Task<Order> GetEntityById(int orderId);
     }
 }

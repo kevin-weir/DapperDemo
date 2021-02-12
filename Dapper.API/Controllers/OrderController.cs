@@ -1,12 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using AutoMapper;
 using Dapper.Repository.Models;
 using Dapper.Repository.Services;
 using Dapper.Domain.Models;
-
 using Dapper.API.Helpers;
-using AutoMapper;
 
 namespace Dapper.API.Controllers
 {
@@ -23,96 +21,86 @@ namespace Dapper.API.Controllers
             this.mapper = mapper;
         }
 
-        //[HttpGet("paging")]
-        //public async Task<PagedResults<OrderDtoQuery>> GetByCustomerId(int customerId, int page, int pageSize)
-        //{
-        //    var orders = await orderRespository.GetByCustomerId(customerId, page, pageSize);
+        [HttpGet]
+        public async Task<PagedResults<OrderResponseDTO>> Get(int page = 1, int pageSize = 10)
+        {
+            var pagedResults = await orderRespository.GetAll(page, pageSize);
 
-        //    return null;
-        //    //return await customerRespository.GetAll();
-        //}
+            return mapper.Map<PagedResults<OrderResponseDTO>>(pagedResults);
+        }
 
-        //[HttpGet("{customerId}")]
-        //public async Task<ActionResult<CustomerDtoQuery>> Get(int customerId)
-        //{
-        //    var customer = await customerRespository.GetById(customerId);
-        //    if (customer is null)
-        //    {
-        //        return NotFound();
-        //    }
+        [HttpGet("{orderId}")]
+        public async Task<ActionResult<OrderResponseDTO>> Get(int orderId)
+        {
+            var order = await orderRespository.GetById(orderId);
+            if (order is null)
+            {
+                return NotFound();
+            }
 
-        //    return customer;
-        //}
+            return mapper.Map<OrderResponseDTO>(order);
+        }
 
-        //[HttpPost]
-        //public async Task<ActionResult<CustomerDtoQuery>> Post(CustomerDtoInsert dtoCustomer)
-        //{
-        //    // Map dtoCustomer to repositories Customer entity
-        //    var newCustomer = mapper.Map<Customer>(dtoCustomer);
+        [HttpPost]
+        public async Task<ActionResult<OrderResponseDTO>> Post(OrderPostDTO orderPostDTO)
+        {
+            // Map orderPostDTO to repositories Order entity
+            var newOrder = mapper.Map<Order>(orderPostDTO);
 
-        //    // Apply audit changes to Customer entity
-        //    newCustomer = Audit<Customer>.PerformAudit(newCustomer);
+            // Apply audit changes to Order entity
+            newOrder = Audit<Order>.PerformAudit(newOrder);
 
-        //    // Validate Customer entity using ModelState
-        //    if (!TryValidateModel(newCustomer))
-        //    {
-        //        return ValidationProblem(ModelState);
-        //    }
+            // Insert new Order into the respository
+            newOrder = await orderRespository.Insert(newOrder);
 
-        //    // Insert new Customer into the respository
-        //    var customerDtoQuery = await customerRespository.Insert(newCustomer);
+            // Map the Order entity to DTO response object and return in body of response
+            var orderResponseDTO = mapper.Map<OrderResponseDTO>(newOrder);
 
-        //    return CreatedAtAction(nameof(Get), new { customerDtoQuery.CustomerId }, customerDtoQuery);
-        //}
+            return CreatedAtAction(nameof(Get), new { orderResponseDTO.OrderId }, orderResponseDTO);
+        }
 
-        //[HttpPut("{customerId}")]
-        //public async Task<ActionResult> Put(int customerId, CustomerDtoUpdate dtoCustomer)
-        //{
-        //    if (customerId != dtoCustomer.CustomerId)
-        //    {
-        //        ModelState.AddModelError("CustomerId", "The Parameter CustomerId and the CustomerId from the body do not match.");
-        //        return ValidationProblem(ModelState);
-        //    }
+        [HttpPut("{orderId}")]
+        public async Task<ActionResult> Put(int orderId, OrderPutDTO orderPutDTO)
+        {
+            if (orderId != orderPutDTO.OrderId)
+            {
+                ModelState.AddModelError("OrderId", "The Parameter OrderId and the OrderId from the body do not match.");
+                return ValidationProblem(ModelState);
+            }
 
-        //    // Get a copy of the Customer entity from the respository
-        //    var updateCustomer = await customerRespository.GetEntityById(customerId);
-        //    if (updateCustomer is null) 
-        //    {
-        //        return NotFound();
-        //    }
+            // Get a copy of the Order entity from the respository
+            var updateOrder = await orderRespository.GetById(orderId);
+            if (updateOrder is null)
+            {
+                return NotFound();
+            }
 
-        //    // Map dtoCustomer to the repositories Customer entity
-        //    updateCustomer = mapper.Map(dtoCustomer, updateCustomer);
+            // Map orderPutDTO to the repositories Order entity
+            updateOrder = mapper.Map(orderPutDTO, updateOrder);
 
-        //    // Apply audit changes to Customer entity
-        //    updateCustomer = Audit<Customer>.PerformAudit(updateCustomer);
+            // Apply audit changes to Order entity
+            updateOrder = Audit<Order>.PerformAudit(updateOrder);
 
-        //    // Validate Customer entity using ModelState
-        //    if (!TryValidateModel(updateCustomer))
-        //    {
-        //        return ValidationProblem(ModelState);
-        //    }
+            // Update Order in the respository
+            var isUpdated = await orderRespository.Update(updateOrder);
+            if (!isUpdated)
+            {
+                return NotFound();
+            }
 
-        //    // Update Customer in the respository
-        //    var isUpdated = await customerRespository.Update(updateCustomer);
-        //    if (!isUpdated) 
-        //    {
-        //        return NotFound();
-        //    }
+            return Ok();
+        }
 
-        //    return Ok();
-        //}
+        [HttpDelete("{orderId}")]
+        public async Task<ActionResult> Delete(int orderId)
+        {
+            var isDeleted = await orderRespository.Delete(orderId);
+            if (!isDeleted)
+            {
+                return NotFound();
+            }
 
-        //[HttpDelete("{customerId}")]
-        //public async Task<ActionResult> Delete(int customerId)
-        //{
-        //    var isDeleted = await customerRespository.Delete(customerId);
-        //    if (!isDeleted) 
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return Ok();
-        //}
+            return Ok();
+        }
     }
 }

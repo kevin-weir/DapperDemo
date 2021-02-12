@@ -14,9 +14,9 @@ namespace Dapper.Repository
         private readonly IDbConnection connection;
         private readonly IDbTransaction transaction;
 
-        const string countrySQL =
+        const string countriesSQL =
             @"SELECT *
-              FROM Country";
+              FROM Countries";
 
         public CountryRespository(IDbConnection connection, IDbTransaction transaction = null)
         {
@@ -27,10 +27,10 @@ namespace Dapper.Repository
         public async Task<IEnumerable<Country>> GetAll()
         {
             var countries = await GetCountries(
-                countrySQL,
+                countriesSQL,
                 param: null,
                 whereExpression: null,
-                orderByExpression: "Country.CountryName ASC");
+                orderByExpression: "Countries.CountryName ASC");
 
             return countries;
         }
@@ -38,9 +38,9 @@ namespace Dapper.Repository
         public async Task<Country> GetById(int countryId)
         {
             var countries = await GetCountries(
-                countrySQL,
+                countriesSQL,
                 param: new { CountryId = countryId },
-                whereExpression: "Country.CountryId = @CountryId",
+                whereExpression: "Countries.CountryId = @CountryId",
                 orderByExpression: null);
 
             return countries.FirstOrDefault();

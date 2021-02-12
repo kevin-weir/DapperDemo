@@ -4,7 +4,7 @@ using Dapper.Repository.Services;
 
 namespace Dapper.Repository.Models
 {
-    [Table("Province")]
+    [Table("Provinces")]
     public class Province : IAuditable
     {
         [Key]

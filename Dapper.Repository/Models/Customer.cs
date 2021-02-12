@@ -4,7 +4,7 @@ using Dapper.Contrib.Extensions;
 
 namespace Dapper.Repository.Models
 {
-    [Table("Customer")]
+    [Table("Customers")]
     public class Customer : IAuditable
     {
         [Key]

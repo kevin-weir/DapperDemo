@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[Province]
+﻿CREATE TABLE [dbo].[Provinces]
 (
 	[ProvinceId] INT IDENTITY(1, 1) NOT NULL,
     [CountryId] INT NOT NULL, 
@@ -8,7 +8,7 @@
     [CreatedDateTime] DATETIME NOT NULL, 
     [ModifiedBy] NVARCHAR(256) NULL, 
     [ModifiedDateTime] DATETIME NOT NULL, 
-    CONSTRAINT [FK_Province_Country] FOREIGN KEY ([CountryId]) REFERENCES [Country]([CountryId]), 
-    CONSTRAINT [AK_Province_ProvinceAbbreviation] UNIQUE ([ProvinceAbbreviation]), 
-    CONSTRAINT [PK_Province] PRIMARY KEY ([ProvinceId])
+    CONSTRAINT [FK_Provinces_Countries] FOREIGN KEY ([CountryId]) REFERENCES [Countries]([CountryId]), 
+    CONSTRAINT [AK_Provinces_ProvinceAbbreviation] UNIQUE ([ProvinceAbbreviation]), 
+    CONSTRAINT [PK_Provinces] PRIMARY KEY ([ProvinceId])
 )

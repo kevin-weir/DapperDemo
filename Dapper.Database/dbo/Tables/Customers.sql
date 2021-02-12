@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[Customer] (
+﻿CREATE TABLE [dbo].[Customers] (
     [CustomerId]      INT IDENTITY(1, 1) NOT NULL,
     [FirstName]       NVARCHAR (50) NOT NULL,
     [LastName]        NVARCHAR (50) NOT NULL,
@@ -12,8 +12,8 @@
     [CreatedDateTime] DATETIME NOT NULL, 
     [ModifiedBy] NVARCHAR(256) NULL, 
     [ModifiedDateTime] DATETIME NOT NULL, 
-    CONSTRAINT [FK_Customer_Country] FOREIGN KEY ([CountryId]) REFERENCES [Country]([CountryId]), 
-    CONSTRAINT [FK_Customer_Province] FOREIGN KEY ([ProvinceId]) REFERENCES [Province]([ProvinceId]), 
-    CONSTRAINT [PK_Customer] PRIMARY KEY ([CustomerId]) 
+    CONSTRAINT [FK_Customers_Countries] FOREIGN KEY ([CountryId]) REFERENCES [Countries]([CountryId]), 
+    CONSTRAINT [FK_Customers_Provinces] FOREIGN KEY ([ProvinceId]) REFERENCES [Provinces]([ProvinceId]), 
+    CONSTRAINT [PK_Customers] PRIMARY KEY ([CustomerId]) 
 );
 

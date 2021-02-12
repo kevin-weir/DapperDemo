@@ -15,10 +15,10 @@ namespace Dapper.Repository
         private readonly IDbConnection connection;
         private readonly IDbTransaction transaction;
 
-        const string orderSQL =
+        const string ordersSQL =
             @"SELECT *
-              FROM Order
-              INNER JOIN Customer ON Order.CustomerId = Customer.CustomerId";
+              FROM Orders
+              INNER JOIN Customers ON Orders.CustomerId = Customers.CustomerId";
 
         public OrderRespository(IDbConnection connection, IDbTransaction transaction = null)
         {
@@ -26,75 +26,99 @@ namespace Dapper.Repository
             this.transaction = transaction;
         }
 
-        //public async Task<PagedResults<OrderDtoQuery>> GetAll(int page = 1, int pageSize = 10)
-        //{
-        //    var orders = await GetOrders(
-        //        orderSQL,
-        //        param: null,
-        //        whereExpression: null,
-        //        orderByExpression: "Order.OrderId DESC",
-        //        page: page,
-        //        pageSize: pageSize);
-
-        //    return orders;
-        //}
-
-        public async Task<PagedResults<OrderResponseDTO>> GetByCustomerId(int customerId, int page= 1, int pageSize = 10)
+        public async Task<PagedResults<Order>> GetAll(int page = 1, int pageSize = 10)
         {
-            var orders = await GetOrders(
-                orderSQL,
-                param: new { CustomerId = customerId },
-                whereExpression: "Order.CustomerId = @CustomerId",
-                orderByExpression: "Order.OrderId DESC",
+            var orders = await GetOrdersPaged(
+                ordersSQL,
+                param: new
+                {
+                    Offset = (page - 1) * pageSize,
+                    PageSize = pageSize
+                },
+                whereExpression: null,
+                orderByExpression: "Orders.OrderId DESC",
                 page: page,
                 pageSize: pageSize);
 
             return orders;
         }
 
-        //public async Task<OrderDtoQuery> GetById(int orderId)
-        //{
-        //    var orders = await GetOrders(
-        //        orderSQL,
-        //        param: new { OrderId = orderId },
-        //        whereExpression: "Order.OrderId = @OrderId",
-        //        orderByExpression: null,
-        //        page: null,
-        //        pageSize: null);
+        public async Task<Order> GetById(int orderId)
+        {
+            var orders = await GetOrders(
+                ordersSQL,
+                param: new { OrderId = orderId },
+                whereExpression: "Orders.OrderId = @OrderId",
+                orderByExpression: null);
 
-        //    return orders.FirstOrDefault(); 
-        //}
+            return orders.FirstOrDefault();
+        }
 
-        private async Task<PagedResults<OrderResponseDTO>> GetOrders(string sql, object param = null, string whereExpression = null, string orderByExpression = null, int? page = null, int? pageSize = null)
+        public async Task<PagedResults<Order>> GetByCustomerId(int customerId, int page = 1, int pageSize = 10)
+        {
+            // Offset and PageSize need to be included in parameters for paging to function
+            var pagedResults = await GetOrdersPaged(
+                ordersSQL,
+                param: new 
+                    { CustomerId = customerId, 
+                      Offset = (page - 1) * pageSize, 
+                      PageSize = pageSize 
+                    },
+                whereExpression: "Orders.CustomerId = @CustomerId",
+                orderByExpression: "Orders.OrderId DESC",
+                page: page,
+                pageSize: pageSize);
+
+            return pagedResults;
+        }
+
+        private async Task<PagedResults<Order>> GetOrdersPaged(string sql, object param = null, string whereExpression = null, string orderByExpression = null, int? page = null, int? pageSize = null)
         {
             sql = SqlHelpers.SqlBuilder(sql, whereExpression, orderByExpression, page, pageSize);
 
+            var pagedResults = new PagedResults<Order>();
 
+            var multi = await connection.QueryMultipleAsync(
+                sql, 
+                param: param, 
+                transaction: transaction);
 
-            //var customers = await connection.QueryAsync<CustomerDtoQuery, CountryDtoQuery, ProvinceDtoQuery, CustomerDtoQuery>(
-            //            sql,
-            //            (customer, country, province) =>
-            //            {
-            //                customer.Country = country;
-            //                customer.Province = province;
+            pagedResults.Items = multi.Read<Order, Customer, Order>((order, customer) =>
+                {
+                    order.Customer = customer;
+                    return order;
+                }, 
+                splitOn: $"{nameof(Customer.CustomerId)}");
 
-            //                return customer;
-            //            },
-            //            param: param,
-            //            transaction: transaction,
-            //            splitOn: $"{nameof(CountryDtoQuery.CountryId)}, {nameof(ProvinceDtoQuery.ProvinceId)}");
+            pagedResults.TotalCount = multi.ReadFirst<int>();
 
-            //return customers;
-
-            return null;
+            return pagedResults;
         }
 
-        //public async Task<OrderDtoQuery> Insert(Order order)
-        //{
-        //    var orderId = await connection.InsertAsync<Order>(order, transaction);
+        private async Task<IEnumerable<Order>> GetOrders(string sql, object param = null, string whereExpression = null, string orderByExpression = null)
+        {
+            sql = SqlHelpers.SqlBuilder(sql, whereExpression, orderByExpression);
 
-        //    return await GetById(orderId);
-        //}
+            var orders = await connection.QueryAsync<Order, Customer, Order>(
+                sql,
+                (order, customer) =>
+                {
+                    order.Customer = customer;
+                    return order;
+                },
+                param: param,
+                transaction: transaction,
+                splitOn: $"{nameof(Customer.CustomerId)}");
+
+            return orders;
+        }
+
+        public async Task<Order> Insert(Order order)
+        {
+            var orderId = await connection.InsertAsync<Order>(order, transaction);
+
+            return await GetById(orderId);
+        }
 
         public async Task<bool> Update(Order order)
         {
@@ -104,11 +128,6 @@ namespace Dapper.Repository
         public async Task<bool> Delete(int orderId)
         {
             return await connection.DeleteAsync<Order>(new Order { OrderId = orderId }, transaction);
-        }
-        
-        public async Task<Order> GetEntityById(int orderId)
-        {
-            return await connection.GetAsync<Order>(orderId, transaction);
         }
     }
 }

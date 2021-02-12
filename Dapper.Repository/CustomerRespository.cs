@@ -14,11 +14,11 @@ namespace Dapper.Repository
         private readonly IDbConnection connection;
         private readonly IDbTransaction transaction;
 
-        const string customerSQL =
+        const string customersSQL =
             @"SELECT *
-              FROM Customer
-              LEFT OUTER JOIN Country ON Customer.CountryId = Country.CountryId
-              LEFT OUTER JOIN Province ON Customer.ProvinceId = Province.ProvinceId";
+              FROM Customers
+              LEFT OUTER JOIN Countries ON Customers.CountryId = Countries.CountryId
+              LEFT OUTER JOIN Provinces ON Customers.ProvinceId = Provinces.ProvinceId";
 
         public CustomerRespository(IDbConnection connection, IDbTransaction transaction = null)
         {
@@ -29,10 +29,10 @@ namespace Dapper.Repository
         public async Task<IEnumerable<Customer>> GetAll()
         {
             var customers = await GetCustomers(
-                customerSQL,
+                customersSQL,
                 param: null,
                 whereExpression: null,
-                orderByExpression: "Customer.LastName ASC");
+                orderByExpression: "Customers.LastName ASC");
 
             return customers;
         }
@@ -40,9 +40,9 @@ namespace Dapper.Repository
         public async Task<Customer> GetById(int customerId)
         {
             var customers = await GetCustomers(
-                customerSQL,
+                customersSQL,
                 param: new { CustomerId = customerId },
-                whereExpression: "Customer.CustomerId = @CustomerId",
+                whereExpression: "Customers.CustomerId = @CustomerId",
                 orderByExpression: null);
 
             return customers.FirstOrDefault(); 

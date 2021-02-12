@@ -47,9 +47,9 @@ namespace Dapper.API.Controllers
         [HttpGet("{customerId}/Order")]
         public async Task<PagedResults<OrderResponseDTO>> GetOrders(int customerId, int page = 1, int pageSize = 10)
        {
-            //var orders = await orderRespository.GetByCustomerId(customerId, page, pageSize);
-            //return mapper.Map<IEnumerable<ProvinceDtoQuery>>(provinces);
-            return null;
+            var pagedResults = await orderRespository.GetByCustomerId(customerId, page, pageSize);
+
+            return mapper.Map<PagedResults<OrderResponseDTO>>(pagedResults);
         }
 
         [HttpPost]

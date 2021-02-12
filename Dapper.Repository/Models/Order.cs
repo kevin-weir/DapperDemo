@@ -4,13 +4,16 @@ using Dapper.Repository.Services;
 
 namespace Dapper.Repository.Models
 {
-    [Table("Order")]
+    [Table("Orders")]
     public class Order : IAuditable
     {
         [Key]
         public int OrderId { get; set; }
 
         public int CustomerId { get; set; }
+
+        [Write(false)]
+        public Customer Customer { get; set; }
 
         public string OrderNumber { get; set; }
 

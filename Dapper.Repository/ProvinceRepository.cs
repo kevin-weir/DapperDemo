@@ -14,10 +14,10 @@ namespace Dapper.Repository
         private readonly IDbConnection connection;
         private readonly IDbTransaction transaction;
 
-        const string provinceSQL =
+        const string provincesSQL =
             @"SELECT *
-              FROM Province
-              INNER JOIN Country ON Province.CountryId = Country.CountryId";
+              FROM Provinces
+              INNER JOIN Countries ON Provinces.CountryId = Countries.CountryId";
 
         public ProvinceRespository(IDbConnection connection, IDbTransaction transaction = null)
         {
@@ -28,10 +28,10 @@ namespace Dapper.Repository
         public async Task<IEnumerable<Province>> GetAll()
         {
             var provinces = await GetProvinces(
-                provinceSQL,
+                provincesSQL,
                 param: null,
                 whereExpression: null,
-                orderByExpression: "Province.ProvinceName ASC");
+                orderByExpression: "Provinces.ProvinceName ASC");
 
             return provinces;
         }
@@ -39,9 +39,9 @@ namespace Dapper.Repository
         public async Task<Province> GetById(int provinceId)
         {
             var provinces = await GetProvinces(
-                provinceSQL,
+                provincesSQL,
                 param: new { ProvinceId = provinceId },
-                whereExpression: "Province.ProvinceId = @ProvinceId",
+                whereExpression: "Provinces.ProvinceId = @ProvinceId",
                 orderByExpression: null);
 
             return provinces.FirstOrDefault();
@@ -50,10 +50,10 @@ namespace Dapper.Repository
         public async Task<IEnumerable<Province>> GetByCountryId(int countryId)
         {
             var provinces = await GetProvinces(
-                provinceSQL,
+                provincesSQL,
                 param: new { CountryId = countryId },
-                whereExpression: "Province.CountryId = @CountryId",
-                orderByExpression: "Province.ProvinceName ASC");
+                whereExpression: "Provinces.CountryId = @CountryId",
+                orderByExpression: "Provinces.ProvinceName ASC");
 
             return provinces;
         }
