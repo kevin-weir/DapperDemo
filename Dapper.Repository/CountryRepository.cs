@@ -11,8 +11,8 @@ namespace Dapper.Repository
 {
     public class CountryRespository : ICountryRespository
     {
-        private readonly IDbConnection connection;
-        private readonly IDbTransaction transaction;
+        private readonly IDbConnection _connection;
+        private readonly IDbTransaction _transaction;
 
         const string countriesSQL =
             @"SELECT *
@@ -20,8 +20,8 @@ namespace Dapper.Repository
 
         public CountryRespository(IDbConnection connection, IDbTransaction transaction = null)
         {
-            this.connection = connection;
-            this.transaction = transaction;
+            _connection = connection;
+            _transaction = transaction;
         }
 
         public async Task<IEnumerable<Country>> GetAll()
@@ -50,29 +50,29 @@ namespace Dapper.Repository
         {
             sql = SqlHelpers.SqlBuilder(sql, whereExpression, orderByExpression);
 
-            var countries = await connection.QueryAsync<Country>(
+            var countries = await _connection.QueryAsync<Country>(
                 sql, 
                 param: param, 
-                transaction: transaction);
+                transaction: _transaction);
             
             return countries;
         }
 
         public async Task<Country> Insert(Country country)
        {
-            var countryId = await connection.InsertAsync<Country>(country, transaction);
+            var countryId = await _connection.InsertAsync<Country>(country, _transaction);
 
             return await GetById(countryId);
         }
 
         public async Task<bool> Update(Country country)
         {
-            return await connection.UpdateAsync<Country>(country, transaction);
+            return await _connection.UpdateAsync<Country>(country, _transaction);
         }
 
         public async Task<bool> Delete(int countryId)
         {
-            return await connection.DeleteAsync<Country>(new Country { CountryId = countryId }, transaction);
+            return await _connection.DeleteAsync<Country>(new Country { CountryId = countryId }, _transaction);
         }
     }
 }

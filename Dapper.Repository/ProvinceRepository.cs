@@ -11,8 +11,8 @@ namespace Dapper.Repository
 {
     public class ProvinceRespository : IProvinceRespository
     {
-        private readonly IDbConnection connection;
-        private readonly IDbTransaction transaction;
+        private readonly IDbConnection _connection;
+        private readonly IDbTransaction _transaction;
 
         const string provincesSQL =
             @"SELECT *
@@ -21,8 +21,8 @@ namespace Dapper.Repository
 
         public ProvinceRespository(IDbConnection connection, IDbTransaction transaction = null)
         {
-            this.connection = connection;
-            this.transaction = transaction;
+            _connection = connection;
+            _transaction = transaction;
         }
 
         public async Task<IEnumerable<Province>> GetAll()
@@ -62,7 +62,7 @@ namespace Dapper.Repository
         {
             sql = SqlHelpers.SqlBuilder(sql, whereExpression, orderByExpression);
 
-            var provinces = await connection.QueryAsync<Province, Country, Province>(
+            var provinces = await _connection.QueryAsync<Province, Country, Province>(
                         sql,
                         (province, country) =>
                         {
@@ -70,7 +70,7 @@ namespace Dapper.Repository
                             return province;
                         },
                         param: param,
-                        transaction: transaction,
+                        transaction: _transaction,
                         splitOn: $"{nameof(Country.CountryId)}");
            
             return provinces;
@@ -78,19 +78,19 @@ namespace Dapper.Repository
 
         public async Task<Province> Insert(Province province)
         {
-            var provinceId = await connection.InsertAsync<Province>(province, transaction);
+            var provinceId = await _connection.InsertAsync<Province>(province, _transaction);
 
             return await GetById(provinceId);
         }
 
         public async Task<bool> Update(Province province)
         {
-            return await connection.UpdateAsync<Province>(province, transaction);
+            return await _connection.UpdateAsync<Province>(province, _transaction);
         }
 
         public async Task<bool> Delete(int provinceId)
         {
-            return await connection.DeleteAsync<Province>(new Province { ProvinceId = provinceId }, transaction);
+            return await _connection.DeleteAsync<Province>(new Province { ProvinceId = provinceId }, _transaction);
         }
     }
 }

@@ -12,8 +12,8 @@ namespace Dapper.Repository
 {
     public class OrderRespository : IOrderRespository
     {
-        private readonly IDbConnection connection;
-        private readonly IDbTransaction transaction;
+        private readonly IDbConnection _connection;
+        private readonly IDbTransaction _transaction;
 
         const string ordersSQL =
             @"SELECT *
@@ -22,8 +22,8 @@ namespace Dapper.Repository
 
         public OrderRespository(IDbConnection connection, IDbTransaction transaction = null)
         {
-            this.connection = connection;
-            this.transaction = transaction;
+            _connection = connection;
+            _transaction = transaction;
         }
 
         public async Task<PagedResults<Order>> GetAll(int page = 1, int pageSize = 10)
@@ -78,10 +78,10 @@ namespace Dapper.Repository
 
             var pagedResults = new PagedResults<Order>();
 
-            var multi = await connection.QueryMultipleAsync(
+            var multi = await _connection.QueryMultipleAsync(
                 sql, 
                 param: param, 
-                transaction: transaction);
+                transaction: _transaction);
 
             pagedResults.Items = multi.Read<Order, Customer, Order>((order, customer) =>
                 {
@@ -99,7 +99,7 @@ namespace Dapper.Repository
         {
             sql = SqlHelpers.SqlBuilder(sql, whereExpression, orderByExpression);
 
-            var orders = await connection.QueryAsync<Order, Customer, Order>(
+            var orders = await _connection.QueryAsync<Order, Customer, Order>(
                 sql,
                 (order, customer) =>
                 {
@@ -107,7 +107,7 @@ namespace Dapper.Repository
                     return order;
                 },
                 param: param,
-                transaction: transaction,
+                transaction: _transaction,
                 splitOn: $"{nameof(Customer.CustomerId)}");
 
             return orders;
@@ -115,19 +115,19 @@ namespace Dapper.Repository
 
         public async Task<Order> Insert(Order order)
         {
-            var orderId = await connection.InsertAsync<Order>(order, transaction);
+            var orderId = await _connection.InsertAsync<Order>(order, _transaction);
 
             return await GetById(orderId);
         }
 
         public async Task<bool> Update(Order order)
         {
-            return await connection.UpdateAsync<Order>(order, transaction);
+            return await _connection.UpdateAsync<Order>(order, _transaction);
         }
 
         public async Task<bool> Delete(int orderId)
         {
-            return await connection.DeleteAsync<Order>(new Order { OrderId = orderId }, transaction);
+            return await _connection.DeleteAsync<Order>(new Order { OrderId = orderId }, _transaction);
         }
     }
 }
