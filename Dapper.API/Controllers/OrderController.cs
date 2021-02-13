@@ -12,49 +12,49 @@ namespace Dapper.API.Controllers
     [Route("[controller]")]
     public class OrderController : ControllerBase
     {
-        private readonly IOrderRespository orderRespository;
-        private readonly IMapper mapper;
+        private readonly IOrderRespository _orderRespository;
+        private readonly IMapper _mapper;
 
         public OrderController(IOrderRespository orderRespository, IMapper mapper)
         {
-            this.orderRespository = orderRespository;
-            this.mapper = mapper;
+            _orderRespository = orderRespository;
+            _mapper = mapper;
         }
 
         [HttpGet]
-        public async Task<PagedResults<OrderResponseDTO>> Get(int page = 1, int pageSize = 10)
+        public async Task<PagedResults<OrderResponseDTO>> Get([FromQuery] PagingParameters pagingParameters)
         {
-            var pagedResults = await orderRespository.GetAll(page, pageSize);
+            var pagedResults = await _orderRespository.GetAll(pagingParameters.Page, pagingParameters.PageSize);
 
-            return mapper.Map<PagedResults<OrderResponseDTO>>(pagedResults);
+            return _mapper.Map<PagedResults<OrderResponseDTO>>(pagedResults);
         }
 
         [HttpGet("{orderId}")]
         public async Task<ActionResult<OrderResponseDTO>> Get(int orderId)
         {
-            var order = await orderRespository.GetById(orderId);
+            var order = await _orderRespository.GetById(orderId);
             if (order is null)
             {
                 return NotFound();
             }
 
-            return mapper.Map<OrderResponseDTO>(order);
+            return _mapper.Map<OrderResponseDTO>(order);
         }
 
         [HttpPost]
         public async Task<ActionResult<OrderResponseDTO>> Post(OrderPostDTO orderPostDTO)
         {
             // Map orderPostDTO to repositories Order entity
-            var newOrder = mapper.Map<Order>(orderPostDTO);
+            var newOrder = _mapper.Map<Order>(orderPostDTO);
 
             // Apply audit changes to Order entity
             newOrder = Audit<Order>.PerformAudit(newOrder);
 
             // Insert new Order into the respository
-            newOrder = await orderRespository.Insert(newOrder);
+            newOrder = await _orderRespository.Insert(newOrder);
 
             // Map the Order entity to DTO response object and return in body of response
-            var orderResponseDTO = mapper.Map<OrderResponseDTO>(newOrder);
+            var orderResponseDTO = _mapper.Map<OrderResponseDTO>(newOrder);
 
             return CreatedAtAction(nameof(Get), new { orderResponseDTO.OrderId }, orderResponseDTO);
         }
@@ -69,20 +69,20 @@ namespace Dapper.API.Controllers
             }
 
             // Get a copy of the Order entity from the respository
-            var updateOrder = await orderRespository.GetById(orderId);
+            var updateOrder = await _orderRespository.GetById(orderId);
             if (updateOrder is null)
             {
                 return NotFound();
             }
 
             // Map orderPutDTO to the repositories Order entity
-            updateOrder = mapper.Map(orderPutDTO, updateOrder);
+            updateOrder = _mapper.Map(orderPutDTO, updateOrder);
 
             // Apply audit changes to Order entity
             updateOrder = Audit<Order>.PerformAudit(updateOrder);
 
             // Update Order in the respository
-            var isUpdated = await orderRespository.Update(updateOrder);
+            var isUpdated = await _orderRespository.Update(updateOrder);
             if (!isUpdated)
             {
                 return NotFound();
@@ -94,7 +94,7 @@ namespace Dapper.API.Controllers
         [HttpDelete("{orderId}")]
         public async Task<ActionResult> Delete(int orderId)
         {
-            var isDeleted = await orderRespository.Delete(orderId);
+            var isDeleted = await _orderRespository.Delete(orderId);
             if (!isDeleted)
             {
                 return NotFound();

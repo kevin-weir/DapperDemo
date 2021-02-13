@@ -13,59 +13,60 @@ namespace Dapper.API.Controllers
     [Route("[controller]")]
     public class CustomerController : ControllerBase
     {
-        private readonly ICustomerRespository customerRespository;
-        private readonly IOrderRespository orderRespository;
-        private readonly IMapper mapper;
+        private readonly ICustomerRespository _customerRespository;
+        private readonly IOrderRespository _orderRespository;
+        private readonly IMapper _mapper;
 
         public CustomerController(ICustomerRespository customerRespository, IOrderRespository orderRespository, IMapper mapper)
         {
-            this.customerRespository = customerRespository;
-            this.orderRespository = orderRespository;
-            this.mapper = mapper;
+            _customerRespository = customerRespository;
+            _orderRespository = orderRespository;
+            _mapper = mapper;
         }
 
         [HttpGet]
         public async Task<IEnumerable<CustomerResponseDTO>> Get()
         {
-            var customers = await customerRespository.GetAll();
+            var customers = await _customerRespository.GetAll();
 
-            return mapper.Map<IEnumerable<CustomerResponseDTO>>(customers);
+            return _mapper.Map<IEnumerable<CustomerResponseDTO>>(customers);
         }
 
         [HttpGet("{customerId}")]
         public async Task<ActionResult<CustomerResponseDTO>> Get(int customerId)
         {
-            var customer = await customerRespository.GetById(customerId);
+            var customer = await _customerRespository.GetById(customerId);
             if (customer is null)
             {
                 return NotFound();
             }
 
-            return mapper.Map<CustomerResponseDTO>(customer);
+            return _mapper.Map<CustomerResponseDTO>(customer);
         }
 
         [HttpGet("{customerId}/Order")]
-        public async Task<PagedResults<OrderResponseDTO>> GetOrders(int customerId, int page = 1, int pageSize = 10)
-       {
-            var pagedResults = await orderRespository.GetByCustomerId(customerId, page, pageSize);
 
-            return mapper.Map<PagedResults<OrderResponseDTO>>(pagedResults);
+        public async Task<PagedResults<OrderResponseDTO>> GetOrders(int customerId, [FromQuery] PagingParameters pagingParameters)
+        {
+            var pagedResults = await _orderRespository.GetByCustomerId(customerId, pagingParameters.Page, pagingParameters.PageSize);
+
+            return _mapper.Map<PagedResults<OrderResponseDTO>>(pagedResults);
         }
 
         [HttpPost]
         public async Task<ActionResult<CustomerResponseDTO>> Post(CustomerPostDTO customerPostDTO)
         {
             // Map customerPostDTO to repositories Customer entity
-            var newCustomer = mapper.Map<Customer>(customerPostDTO);
+            var newCustomer = _mapper.Map<Customer>(customerPostDTO);
 
             // Apply audit changes to Customer entity
             newCustomer = Audit<Customer>.PerformAudit(newCustomer);
 
             // Insert new Customer into the respository
-            newCustomer = await customerRespository.Insert(newCustomer);
+            newCustomer = await _customerRespository.Insert(newCustomer);
 
             // Map the Customer entity to DTO response object and return in body of response
-            var customerResponseDTO = mapper.Map<CustomerResponseDTO>(newCustomer);
+            var customerResponseDTO = _mapper.Map<CustomerResponseDTO>(newCustomer);
 
             return CreatedAtAction(nameof(Get), new { customerResponseDTO.CustomerId }, customerResponseDTO);
         }
@@ -80,20 +81,20 @@ namespace Dapper.API.Controllers
             }
 
             // Get a copy of the Customer entity from the respository
-            var updateCustomer = await customerRespository.GetById(customerId);
+            var updateCustomer = await _customerRespository.GetById(customerId);
             if (updateCustomer is null) 
             {
                 return NotFound();
             }
 
             // Map customerPutDTO to the repositories Customer entity
-            updateCustomer = mapper.Map(customerPutDTO, updateCustomer);
+            updateCustomer = _mapper.Map(customerPutDTO, updateCustomer);
 
             // Apply audit changes to Customer entity
             updateCustomer = Audit<Customer>.PerformAudit(updateCustomer);
 
             // Update Customer in the respository
-            var isUpdated = await customerRespository.Update(updateCustomer);
+            var isUpdated = await _customerRespository.Update(updateCustomer);
             if (!isUpdated) 
             {
                 return NotFound();
@@ -105,7 +106,7 @@ namespace Dapper.API.Controllers
         [HttpDelete("{customerId}")]
         public async Task<ActionResult> Delete(int customerId)
         {
-            var isDeleted = await customerRespository.Delete(customerId);
+            var isDeleted = await _customerRespository.Delete(customerId);
             if (!isDeleted) 
             {
                 return NotFound();

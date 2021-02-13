@@ -13,49 +13,49 @@ namespace Dapper.API.Controllers
     [Route("[controller]")]
     public class ProvinceController : ControllerBase
     {
-        private readonly IProvinceRespository provinceRespository;
-        private readonly IMapper mapper;
+        private readonly IProvinceRespository _provinceRespository;
+        private readonly IMapper _mapper;
 
         public ProvinceController(IProvinceRespository provinceRespository, IMapper mapper)
         {
-            this.provinceRespository = provinceRespository;
-            this.mapper = mapper;
+            _provinceRespository = provinceRespository;
+            _mapper = mapper;
         }
 
         [HttpGet]
         public async Task<IEnumerable<ProvinceResponseDTO>> Get()
         {
-            var provinces = await provinceRespository.GetAll();
+            var provinces = await _provinceRespository.GetAll();
 
-            return mapper.Map<IEnumerable<ProvinceResponseDTO>>(provinces);
+            return _mapper.Map<IEnumerable<ProvinceResponseDTO>>(provinces);
         }
 
         [HttpGet("{provinceId}")]
         public async Task<ActionResult<ProvinceResponseDTO>> Get(int provinceId)
         {
-            var province = await provinceRespository.GetById(provinceId);
+            var province = await _provinceRespository.GetById(provinceId);
             if (province is null)
             {
                 return NotFound();
             }
 
-            return mapper.Map<ProvinceResponseDTO>(province);
+            return _mapper.Map<ProvinceResponseDTO>(province);
         }
 
         [HttpPost]
         public async Task<ActionResult<ProvinceResponseDTO>> Post(ProvincePostDTO provincePostDTO)
         {
             // Map provincePostDTO to repositories Province entity
-            var newProvince = mapper.Map<Province>(provincePostDTO);
+            var newProvince = _mapper.Map<Province>(provincePostDTO);
 
             // Apply audit changes to Province entity
             newProvince = Audit<Province>.PerformAudit(newProvince);
 
             // Insert new Province into the respository
-            newProvince = await provinceRespository.Insert(newProvince);
+            newProvince = await _provinceRespository.Insert(newProvince);
 
             // Map the Province entity to DTO response object and return in body of response
-            var provinceResponseDTO = mapper.Map<ProvinceResponseDTO>(newProvince);
+            var provinceResponseDTO = _mapper.Map<ProvinceResponseDTO>(newProvince);
 
             return CreatedAtAction(nameof(Get), new { provinceResponseDTO.ProvinceId }, provinceResponseDTO);
         }
@@ -70,20 +70,20 @@ namespace Dapper.API.Controllers
             }
 
             // Get a copy of the Province entity from the respository
-            var updateProvince = await provinceRespository.GetById(provinceId);
+            var updateProvince = await _provinceRespository.GetById(provinceId);
             if (updateProvince is null)
             {
                 return NotFound();
             }
 
             // Map provincePutDTO to the repositories Province entity
-            updateProvince = mapper.Map(provincePutDTO, updateProvince);
+            updateProvince = _mapper.Map(provincePutDTO, updateProvince);
 
             // Apply audit changes to Province entity
             updateProvince = Audit<Province>.PerformAudit(updateProvince);
 
             // Update Province in the respository
-            var isUpdated = await provinceRespository.Update(updateProvince);
+            var isUpdated = await _provinceRespository.Update(updateProvince);
             if (!isUpdated)
             {
                 return NotFound();
@@ -95,7 +95,7 @@ namespace Dapper.API.Controllers
         [HttpDelete("{provinceId}")]
         public async Task<ActionResult> Delete(int provinceId)
         {
-            var isDeleted = await provinceRespository.Delete(provinceId);
+            var isDeleted = await _provinceRespository.Delete(provinceId);
             if (!isDeleted)
             {
                 return NotFound();
