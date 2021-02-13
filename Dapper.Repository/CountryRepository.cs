@@ -74,10 +74,5 @@ namespace Dapper.Repository
         {
             return await connection.DeleteAsync<Country>(new Country { CountryId = countryId }, transaction);
         }
-
-        public async Task<Country> GetEntityById(int countryId)
-        {
-            return await connection.GetAsync<Country>(countryId);
-        }
     }
 }
