@@ -25,6 +25,7 @@ namespace Dapper.API.Controllers
             _mapper = mapper;
         }
 
+
         /// <summary>
         /// Returns a list of all Customers
         /// </summary>
@@ -34,14 +35,15 @@ namespace Dapper.API.Controllers
         /// <response code="403">Forbidden</response>
         /// <response code="500">Server Error</response>
         [ProducesResponseType(typeof(IEnumerable<CustomerResponseDTO>), StatusCodes.Status200OK)]
-
         [HttpGet(Name = nameof(CustomerGetAll))]
+
         public async Task<IEnumerable<CustomerResponseDTO>> CustomerGetAll()
         {
             var customers = await _customerRespository.GetAll();
 
             return _mapper.Map<IEnumerable<CustomerResponseDTO>>(customers);
         }
+
 
         /// <summary>
         /// Gets a specific Customer
@@ -55,8 +57,8 @@ namespace Dapper.API.Controllers
         /// <response code="404">Not Found</response>
         /// <response code="500">Server Error</response>
         [ProducesResponseType(typeof(CustomerResponseDTO), StatusCodes.Status200OK)]
-
         [HttpGet("{customerId}", Name = nameof(CustomerGetById))]
+
         public async Task<ActionResult<CustomerResponseDTO>> CustomerGetById(int customerId)
         {
             var customer = await _customerRespository.GetById(customerId);
@@ -68,6 +70,7 @@ namespace Dapper.API.Controllers
             return _mapper.Map<CustomerResponseDTO>(customer);
         }
 
+
         /// <summary>
         /// Returns a list of paged Orders for a specific Customer
         /// </summary>
@@ -78,14 +81,15 @@ namespace Dapper.API.Controllers
         /// <response code="403">Forbidden</response>
         /// <response code="500">Server Error</response>
         [ProducesResponseType(typeof(PagedResults<OrderResponseDTO>), StatusCodes.Status200OK)]
-
         [HttpGet("{customerId}/Order", Name = nameof(CustomerGetOrders))]
+
         public async Task<PagedResults<OrderResponseDTO>> CustomerGetOrders(int customerId, [FromQuery] PagingParameters pagingParameters)
         {
             var pagedResults = await _orderRespository.GetByCustomerId(customerId, pagingParameters.Page, pagingParameters.PageSize);
 
             return _mapper.Map<PagedResults<OrderResponseDTO>>(pagedResults);
         }
+
 
         /// <summary>
         /// Creates a new Customer
@@ -99,8 +103,8 @@ namespace Dapper.API.Controllers
         /// <response code="500">Server Error</response>
         [ProducesResponseType(typeof(CustomerResponseDTO), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
-
         [HttpPost(Name = nameof(CustomerInsert))]
+
         public async Task<ActionResult<CustomerResponseDTO>> CustomerInsert(CustomerPostDTO customerPostDTO)
         {
             // Map customerPostDTO to repositories Customer entity
@@ -118,6 +122,7 @@ namespace Dapper.API.Controllers
             return CreatedAtAction(nameof(CustomerGetById), new { customerResponseDTO.CustomerId }, customerResponseDTO);
         }
 
+
         /// <summary>
         /// Updates a specific Customer
         /// </summary>
@@ -131,8 +136,8 @@ namespace Dapper.API.Controllers
         /// <response code="404">Not Found</response>
         /// <response code="500">Server Error</response>
         [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
-
         [HttpPut("{customerId}", Name = nameof(CustomerUpdate))]
+
         public async Task<ActionResult> CustomerUpdate(int customerId, CustomerPutDTO customerPutDTO)
         {
             if (customerId != customerPutDTO.CustomerId)
@@ -164,6 +169,7 @@ namespace Dapper.API.Controllers
             return Ok();
         }
 
+
         /// <summary>
         /// Deletes a specific Customer
         /// </summary>
@@ -174,8 +180,8 @@ namespace Dapper.API.Controllers
         /// <response code="403">Forbidden</response>
         /// <response code="404">Not Found</response>
         /// <response code="500">Server Error</response>
-
         [HttpDelete("{customerId}", Name = nameof(CustomerDelete))]
+
         public async Task<ActionResult> CustomerDelete(int customerId)
         {
             var isDeleted = await _customerRespository.Delete(customerId);
