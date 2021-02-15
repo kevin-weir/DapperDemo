@@ -6,6 +6,7 @@ using Dapper.Repository.Models;
 using Dapper.Repository.Services;
 using Dapper.Domain.Models;
 using Dapper.API.Helpers;
+using Microsoft.AspNetCore.Http;
 
 namespace Dapper.API.Controllers
 {
@@ -24,6 +25,16 @@ namespace Dapper.API.Controllers
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// Returns a list of all Customers
+        /// </summary>
+        /// <remarks></remarks>
+        /// <response code="200">Success</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="403">Forbidden</response>
+        /// <response code="500">Server Error</response>
+        [ProducesResponseType(typeof(IEnumerable<CustomerResponseDTO>), StatusCodes.Status200OK)]
+
         [HttpGet(Name = nameof(CustomerGetAll))]
         public async Task<IEnumerable<CustomerResponseDTO>> CustomerGetAll()
         {
@@ -31,6 +42,19 @@ namespace Dapper.API.Controllers
 
             return _mapper.Map<IEnumerable<CustomerResponseDTO>>(customers);
         }
+
+        /// <summary>
+        /// Gets a specific Customer
+        /// </summary>
+        /// <remarks></remarks>
+        /// <param name="customerId">The customerId that uniquely identifies the Customer</param>
+        /// <returns>Returns a specific ToDoItem</returns>
+        /// <response code="200">Success</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="403">Forbidden</response>
+        /// <response code="404">Not Found</response>
+        /// <response code="500">Server Error</response>
+        [ProducesResponseType(typeof(CustomerResponseDTO), StatusCodes.Status200OK)]
 
         [HttpGet("{customerId}", Name = nameof(CustomerGetById))]
         public async Task<ActionResult<CustomerResponseDTO>> CustomerGetById(int customerId)
@@ -44,14 +68,37 @@ namespace Dapper.API.Controllers
             return _mapper.Map<CustomerResponseDTO>(customer);
         }
 
-        [HttpGet("{customerId}/Order", Name = nameof(CustomerGetOrders))]
+        /// <summary>
+        /// Returns a list of paged Orders for a specific Customer
+        /// </summary>
+        /// <remarks></remarks>
+        /// <param name="customerId">The customerId that uniquely identifies the Customer</param>
+        /// <response code="200">Success</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="403">Forbidden</response>
+        /// <response code="500">Server Error</response>
+        [ProducesResponseType(typeof(PagedResults<OrderResponseDTO>), StatusCodes.Status200OK)]
 
+        [HttpGet("{customerId}/Order", Name = nameof(CustomerGetOrders))]
         public async Task<PagedResults<OrderResponseDTO>> CustomerGetOrders(int customerId, [FromQuery] PagingParameters pagingParameters)
         {
             var pagedResults = await _orderRespository.GetByCustomerId(customerId, pagingParameters.Page, pagingParameters.PageSize);
 
             return _mapper.Map<PagedResults<OrderResponseDTO>>(pagedResults);
         }
+
+        /// <summary>
+        /// Creates a new Customer
+        /// </summary>
+        /// <remarks></remarks>
+        /// <param name="customerPostDTO">The JSON body used to create the Customer</param>
+        /// <response code="201">Success</response>
+        /// <response code="400">Bad Request</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="403">Forbidden</response>
+        /// <response code="500">Server Error</response>
+        [ProducesResponseType(typeof(CustomerResponseDTO), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
 
         [HttpPost(Name = nameof(CustomerInsert))]
         public async Task<ActionResult<CustomerResponseDTO>> CustomerInsert(CustomerPostDTO customerPostDTO)
@@ -70,6 +117,20 @@ namespace Dapper.API.Controllers
 
             return CreatedAtAction(nameof(CustomerGetById), new { customerResponseDTO.CustomerId }, customerResponseDTO);
         }
+
+        /// <summary>
+        /// Updates a specific Customer
+        /// </summary>
+        /// <remarks></remarks>
+        /// <param name="customerId">The customerId that uniquely identifies the Customer</param>
+        /// <param name="customerPutDTO">The JSON body used to update the Customer</param>
+        /// <response code="200">Success</response>
+        /// <response code="400">Bad Request</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="403">Forbidden</response>
+        /// <response code="404">Not Found</response>
+        /// <response code="500">Server Error</response>
+        [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
 
         [HttpPut("{customerId}", Name = nameof(CustomerUpdate))]
         public async Task<ActionResult> CustomerUpdate(int customerId, CustomerPutDTO customerPutDTO)
@@ -102,6 +163,17 @@ namespace Dapper.API.Controllers
 
             return Ok();
         }
+
+        /// <summary>
+        /// Deletes a specific Customer
+        /// </summary>
+        /// <remarks></remarks>
+        /// <param name="customerId">The customerId that uniquely identifies the Customer</param>
+        /// <response code="200">Success</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="403">Forbidden</response>
+        /// <response code="404">Not Found</response>
+        /// <response code="500">Server Error</response>
 
         [HttpDelete("{customerId}", Name = nameof(CustomerDelete))]
         public async Task<ActionResult> CustomerDelete(int customerId)
