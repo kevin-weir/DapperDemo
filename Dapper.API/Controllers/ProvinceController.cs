@@ -22,16 +22,16 @@ namespace Dapper.API.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet]
-        public async Task<IEnumerable<ProvinceResponseDTO>> Get()
+        [HttpGet(Name = nameof(ProvinceGetAll))]
+        public async Task<IEnumerable<ProvinceResponseDTO>> ProvinceGetAll()
         {
             var provinces = await _provinceRespository.GetAll();
 
             return _mapper.Map<IEnumerable<ProvinceResponseDTO>>(provinces);
         }
 
-        [HttpGet("{provinceId}")]
-        public async Task<ActionResult<ProvinceResponseDTO>> Get(int provinceId)
+        [HttpGet("{provinceId}", Name = nameof(ProvinceGetById))]
+        public async Task<ActionResult<ProvinceResponseDTO>> ProvinceGetById(int provinceId)
         {
             var province = await _provinceRespository.GetById(provinceId);
             if (province is null)
@@ -42,8 +42,8 @@ namespace Dapper.API.Controllers
             return _mapper.Map<ProvinceResponseDTO>(province);
         }
 
-        [HttpPost]
-        public async Task<ActionResult<ProvinceResponseDTO>> Post(ProvincePostDTO provincePostDTO)
+        [HttpPost(Name = nameof(ProvinceInsert))]
+        public async Task<ActionResult<ProvinceResponseDTO>> ProvinceInsert(ProvincePostDTO provincePostDTO)
         {
             // Map provincePostDTO to repositories Province entity
             var newProvince = _mapper.Map<Province>(provincePostDTO);
@@ -57,11 +57,11 @@ namespace Dapper.API.Controllers
             // Map the Province entity to DTO response object and return in body of response
             var provinceResponseDTO = _mapper.Map<ProvinceResponseDTO>(newProvince);
 
-            return CreatedAtAction(nameof(Get), new { provinceResponseDTO.ProvinceId }, provinceResponseDTO);
+            return CreatedAtAction(nameof(ProvinceGetById), new { provinceResponseDTO.ProvinceId }, provinceResponseDTO);
         }
 
-        [HttpPut("{provinceId}")]
-        public async Task<ActionResult> Put(int provinceId, ProvincePutDTO provincePutDTO)
+        [HttpPut("{provinceId}", Name = nameof(ProvinceUpdate))]
+        public async Task<ActionResult> ProvinceUpdate(int provinceId, ProvincePutDTO provincePutDTO)
         {
             if (provinceId != provincePutDTO.ProvinceId)
             {
@@ -92,8 +92,8 @@ namespace Dapper.API.Controllers
             return Ok();
         }
 
-        [HttpDelete("{provinceId}")]
-        public async Task<ActionResult> Delete(int provinceId)
+        [HttpDelete("{provinceId}", Name = nameof(ProvinceDelete))]
+        public async Task<ActionResult> ProvinceDelete(int provinceId)
         {
             var isDeleted = await _provinceRespository.Delete(provinceId);
             if (!isDeleted)

@@ -21,16 +21,16 @@ namespace Dapper.API.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet]
-        public async Task<PagedResults<OrderResponseDTO>> Get([FromQuery] PagingParameters pagingParameters)
+        [HttpGet(Name = nameof(OrderGetAll))]
+        public async Task<PagedResults<OrderResponseDTO>> OrderGetAll([FromQuery] PagingParameters pagingParameters)
         {
             var pagedResults = await _orderRespository.GetAll(pagingParameters.Page, pagingParameters.PageSize);
 
             return _mapper.Map<PagedResults<OrderResponseDTO>>(pagedResults);
         }
 
-        [HttpGet("{orderId}")]
-        public async Task<ActionResult<OrderResponseDTO>> Get(int orderId)
+        [HttpGet("{orderId}", Name = nameof(OrderGetById))]
+        public async Task<ActionResult<OrderResponseDTO>> OrderGetById(int orderId)
         {
             var order = await _orderRespository.GetById(orderId);
             if (order is null)
@@ -41,8 +41,8 @@ namespace Dapper.API.Controllers
             return _mapper.Map<OrderResponseDTO>(order);
         }
 
-        [HttpPost]
-        public async Task<ActionResult<OrderResponseDTO>> Post(OrderPostDTO orderPostDTO)
+        [HttpPost(Name = nameof(OrderInsert))]
+        public async Task<ActionResult<OrderResponseDTO>> OrderInsert(OrderPostDTO orderPostDTO)
         {
             // Map orderPostDTO to repositories Order entity
             var newOrder = _mapper.Map<Order>(orderPostDTO);
@@ -56,11 +56,11 @@ namespace Dapper.API.Controllers
             // Map the Order entity to DTO response object and return in body of response
             var orderResponseDTO = _mapper.Map<OrderResponseDTO>(newOrder);
 
-            return CreatedAtAction(nameof(Get), new { orderResponseDTO.OrderId }, orderResponseDTO);
+            return CreatedAtAction(nameof(OrderGetById), new { orderResponseDTO.OrderId }, orderResponseDTO);
         }
 
-        [HttpPut("{orderId}")]
-        public async Task<ActionResult> Put(int orderId, OrderPutDTO orderPutDTO)
+        [HttpPut("{orderId}", Name = nameof(OrderUpdate))]
+        public async Task<ActionResult> OrderUpdate(int orderId, OrderPutDTO orderPutDTO)
         {
             if (orderId != orderPutDTO.OrderId)
             {
@@ -91,8 +91,8 @@ namespace Dapper.API.Controllers
             return Ok();
         }
 
-        [HttpDelete("{orderId}")]
-        public async Task<ActionResult> Delete(int orderId)
+        [HttpDelete("{orderId}", Name = nameof(OrderDelete))]
+        public async Task<ActionResult> OrderDelete(int orderId)
         {
             var isDeleted = await _orderRespository.Delete(orderId);
             if (!isDeleted)
